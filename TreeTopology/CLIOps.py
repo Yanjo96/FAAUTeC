@@ -63,12 +63,22 @@ class CLI():
                             help='absolute path to constraint file; infile in NEWICK format; Example: /path_to_input/tree.txt',
                             required=True)
 
+        required.add_argument('-r',
+                            '--raxml',
+                            help='path to RAxML',
+                            required=True)
+
         required.add_argument('-o',
                             '--output',
                             help='Output Tree in Newick format',
                             required=True)
 
         ### OPTIONAL ###
+
+        optional.add_argument('--model',
+                            help='Model for RAxML',
+                            default="GTR+G",
+                            required=False)
 
         optional.add_argument('--version',
                             help='print version number and exit',
@@ -79,6 +89,8 @@ class CLI():
 
         TreeTopologyMain.treetopology(args.alignment,
                                       args.constraint,
+                                      args.raxml,
+                                      args.model,
                                       args.output)
 
 ########
