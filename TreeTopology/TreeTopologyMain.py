@@ -7,6 +7,7 @@
 #####################
 
 import IOOps as IOOps
+import CheckingOps as CheckOps
 import os
 
 ###############
@@ -39,16 +40,23 @@ def treetopology(alignment,
                  output):
 
     # 1. input handler
-    #    Maybe check here if alignment file is in PHYLIB or FASTA format
-    #    if alignment file is in NEXUS format it have to convert to phylib format
-    #    because RAxML can not handle NEXUS files
-    if (alignment.split(".")[-1] == 'nex'):
-        alignment = IOOps.Inp().nexus2phylib(alignment)
+    if CheckOps.InputFormatCheck().checkFORMAT(alignment, "phylip-relaxed"):
+        pass
+    elif CheckOps.InputFormatCheck().checkFORMAT(alignment, "fasta"):
+        pass
+    # if alignment file is in NEXUS format it have to convert to phylip format
+    # because RAxML can not handle NEXUS files
+    elif CheckOps.InputFormatCheck().checkFORMAT(alignment, "nexus"):
+        alignment = IOOps.Inp().nexus2phylip(alignment)
+    else:
+        raise Exception("File " + alignment + " is not in supported file" +
+                        " format (PHYLIP, FASTA, NEXUS)")
 
-    # 2. find optimal tree with RAxML or FastTree
+
+    # 2. find optimal tree with RAxML or FastTree (use pylogeny)
     os.system(raxml + " --msa " + alignment + " --model " + model + " --threads 1")
 
-    # 3. build trees from contraints and search most likely one
+    # 3. build trees from contraints and search most likely one (use pylogeny)
 
     # 4. is best tree calculated from contraints (3) significant worse than
     #    the optimal one (2); if yes return (2); otherwise return (3)

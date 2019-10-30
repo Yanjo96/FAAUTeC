@@ -31,9 +31,9 @@ class InputFormatCheck():
     def __init__(self):
         pass
 
-    def checkPHYLIB(self):
-        pass
 
-    def checkFASTA(self, alignment):
-        with open(alignment, "r") as handle:
-            
+    def checkFORMAT(self, alignment, format):
+        try:
+            return any(SeqIO.parse(alignment, format))
+        except:
+            return False

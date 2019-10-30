@@ -55,7 +55,7 @@ class CLI():
         ### REQUIRED ###
         required.add_argument('-a',
                             '--alignment',
-                            help='absolute path to infile; infile in NEXUS, PHYLIB or FASTA format; Example: /path_to_input/test.nex',
+                            help='absolute path to infile; infile in NEXUS, PHYLIP or FASTA format; Example: /path_to_input/test.nex',
                             required=True)
 
         required.add_argument('-c',
