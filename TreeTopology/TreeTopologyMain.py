@@ -60,3 +60,4 @@ def treetopology(alignment,
 
     # 4. is best tree calculated from contraints (3) significant worse than
     #    the optimal one (2); if yes return (2); otherwise return (3)
+    #    (use pylogeny)
