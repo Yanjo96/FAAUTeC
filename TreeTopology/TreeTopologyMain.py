@@ -9,6 +9,7 @@
 import IOOps as IOOps
 import CheckingOps as CheckOps
 import os
+from Bio.Phylo.Applications import RaxmlCommandline
 
 ###############
 # AUTHOR INFO #
@@ -35,7 +36,7 @@ __version__ = '0.1'
 
 def treetopology(alignment,
                  constraint,
-                 raxml,
+                 consel,
                  model,
                  output):
 
@@ -53,11 +54,35 @@ def treetopology(alignment,
                         " format (PHYLIP, FASTA, NEXUS)")
 
 
-    # 2. find optimal tree with RAxML or FastTree (use pylogeny)
-    os.system(raxml + " --msa " + alignment + " --model " + model + " --threads 1")
+    # 2. find optimal tree with RAxML or FastTree
+    raxml_cline = RaxmlCommandline(sequences=alignment,
+                                   model=model,
+                                   name=output + "_withoutConstraints")
+    raxml_cline()
 
-    # 3. build trees from contraints and search most likely one (use pylogeny)
+    # 3. build trees from contraints and search most likely one
+    raxml_cline = RaxmlCommandline(sequences=alignment,
+                                   model=model,
+                                   grouping_constraint=constraint,
+                                   name=output + "_withConstraints")
+    raxml_cline()
+
+    IOOps.Outp().concatTrees(output)
+
 
     # 4. is best tree calculated from contraints (3) significant worse than
     #    the optimal one (2); if yes return (2); otherwise return (3)
-    #    (use pylogeny)
+
+    # 4.1 build site likelihoods
+    raxml_cline = RaxmlCommandline(sequences=alignment,
+                                   model=model,
+                                   algorithm='g',
+                                   starting_tree='RAxML_bestTree.' + output + '_withoutConstraints',
+                                   bipartition_filename=output + '_multipleTrees.txt',
+                                   name=output + ".sitelh")
+    raxml_cline()
+
+    # 4.2 running several test using CONSEL
+    os.system(consel + '/makermt --puzzle RAxML_perSiteLLs.' + output + '.sitelh')
+    os.system(consel + '/consel RAxML_perSiteLLs.' + output)
+    os.system(consel + '/catpv RAxML_perSiteLLs' + ' > consel_output.txt')

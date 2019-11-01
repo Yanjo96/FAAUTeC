@@ -8,7 +8,7 @@ python3 setup.py test     # Testing
 ```
 
 ## Requirements
-* RAxML (https://github.com/amkozlov/raxml-ng)
+* RAxML (https://github.com/stamatak/standard-RAxML)
 * CONSEL (https://github.com/shimo-lab/consel)
 
 ## USAGE
@@ -16,8 +16,8 @@ python3 setup.py test     # Testing
 ```
 ALIGN=examples/input/TestInput1.nex
 CONST=examples/input/TestConstraints.txt
-RAxML=path/to/raxml
-OTPUT=examples/output/TestOutput.txt
+CONSL=path/to/consel
+OTPUT='output_name'
 
-python3 scripts/treetopology_launcher_CLI.py -a $INPUT -c $METAD -r $RAxML -o $OTPUT
+python3 scripts/treetopology_launcher_CLI.py -a $INPUT -c $METAD --consel $CONSL -o $OTPUT
 ```

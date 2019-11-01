@@ -88,3 +88,12 @@ class Outp:
 
     def __init__(self):
         pass
+
+    def concatTrees(self, name):
+        with open(name + "_multipleTrees.txt", "w") as multiTree:
+            with open("RAxML_bestTree." + name + "_withoutConstraints", "r") as tree:
+                for line in tree:
+                    multiTree.write(line + "\n")
+            with open("RAxML_bestTree." + name + "_withConstraints", "r") as tree:
+                for line in tree:
+                    multiTree.write(line + "\n")
