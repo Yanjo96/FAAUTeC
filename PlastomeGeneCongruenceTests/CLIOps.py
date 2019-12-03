@@ -13,10 +13,10 @@ import os
 # Add specific directory to sys.path in order to import its modules
 # NOTE: THIS RELATIVE IMPORTING IS AMATEURISH.
 # NOTE: COULD THE FOLLOWING IMPORT BE REPLACED WITH 'import annonex2embl'?
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'annonex2embl'))
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'plastomeGeneCongruenceTests'))
 
 # IMPORTANT: TFL must be after "sys.path.append"
-import TreeTopologyMain
+import PlastomeGeneCongruenceTestsMain
 import argparse
 
 ###############
@@ -25,8 +25,8 @@ import argparse
 
 __author__ = 'Nils Jenke; Yannick Hartmaring'
 __copyright__ = 'Copyright (C) 2019 Project Gruenstaeudl'
-__info__ = 'TreeTopology'
-__version__ = '2019.10.25'
+__info__ = 'PlastomeGeneCongruenceTests'
+__version__ = '2019.12.03'
 
 #############
 # DEBUGGING #
@@ -55,22 +55,17 @@ class CLI():
         ### REQUIRED ###
         required.add_argument('-a',
                             '--alignment',
-                            help='absolute path to infile; infile in NEXUS, PHYLIP or FASTA format; Example: /path_to_input/test.nex',
+                            help='absolute path to infile; infile in PHYLIP or FASTA format; Example: /path_to_input/test.phy',
                             required=True)
 
         required.add_argument('-c',
                             '--constraint',
-                            help='absolute path to constraint file; infile in NEWICK format; Example: /path_to_input/tree.txt',
+                            help='absolute path to constraint file; infile in NEWICK format; Example: /path_to_input/tree.tre',
                             required=True)
 
         required.add_argument('--consel',
                               help='path to consel executables',
                               required=True)
-
-        required.add_argument('-o',
-                            '--output',
-                            help='Output Tree in Newick format',
-                            required=True)
 
         ### OPTIONAL ###
 
@@ -86,15 +81,14 @@ class CLI():
 
         args = parser.parse_args()
 
-        TreeTopologyMain.treetopology(args.alignment,
-                                      args.constraint,
-                                      args.consel,
-                                      args.model,
-                                      args.output)
+        PlastomeGeneCongruenceTestsMain.plastomeGeneCongruenceTests(args.alignment,
+                                                                    args.constraint,
+                                                                    args.consel,
+                                                                    args.model)
 
 ########
 # MAIN #
 ########
 
-def start_treetopology():
+def start_plastomeGeneCongruenceTests():
     CLI()

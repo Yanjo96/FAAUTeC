@@ -2,6 +2,8 @@ examples/output/*
 examples/input/*.raxml*
 examples/input/*.nex.phy
 
+/output/
+
 ./RAxML*
 
 *.pyc

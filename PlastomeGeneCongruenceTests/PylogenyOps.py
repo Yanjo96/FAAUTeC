@@ -1,4 +1,5 @@
-from pylogeny.executable import executable, consel
+from pylogeny.executable import executable, aTemporaryDirectory, treepuzzle, E_TREEPUZZ
+from pylogeny import tree
 from os.path import abspath, isdir, isfile
 
 class raxml_2(executable):
@@ -57,6 +58,7 @@ class raxml_2(executable):
 
     def runFunction(self):
         self.run()
+        return self.getInstructionString()
 
 class consel_2(executable):
 
@@ -64,19 +66,20 @@ class consel_2(executable):
     confidence interval and perform an AU test on a set of trees. Requires
     CONSEL to be installed. '''
 
-    def __init__(self,treeset,alignment,name):
+    def __init__(self,treeset,alignment, sitelh, name, consel_path):
 
-        self.treeset   = treeset
-        self.name      = name
-        self.alignment = alignment
-        self._out      = None
-        self.sitelh    = None
-        self.raw       = None
-        self.rmt       = None
-        self.pv        = None
-        self.auvals    = list()
-        self.interval  = tree.treeSet()
-        self.rejected  = tree.treeSet()
+        self.treeset     = treeset
+        self.name        = name
+        self.consel_path = consel_path
+        self.alignment   = alignment
+        self._out        = None
+        self.sitelh      = sitelh
+        self.raw         = None
+        self.rmt         = None
+        self.pv          = None
+        self.auvals      = list()
+        self.interval    = tree.treeSet()
+        self.rejected    = tree.treeSet()
         self.instruction = ''
 
     def getInstructionString(self):
@@ -92,17 +95,16 @@ class consel_2(executable):
     def _convertRawData(self):
 
         if not isfile('%s.mt' % (self.name)):
-            self.instruction = 'seqmt --puzzle %s %s.mt' %\
-                (self.sitelh,self.name)
+            self.instruction = '%s/seqmt --puzzle %s %s.mt' %\
+                (self.consel_path,self.sitelh,self.name)
             self._out = self.run()
             if not isfile('%s.mt' % (self.name)):
                 raise IOError("CONSEL 'seqmt' did not create mt file.")
         self.raw = '%s.mt' % (self.name)
 
     def _createReplicates(self):
-
         if not isfile('%s.rmt' % (self.name)):
-            self.instruction = 'makermt %s' % (self.raw)
+            self.instruction = '%s/makermt %s' % (self.consel_path, self.raw)
             self._out = self.run()
             if not isfile('%s.rmt' % (self.name)):
                 raise IOError("CONSEL 'markermt' did not create rmt file.")
@@ -111,13 +113,13 @@ class consel_2(executable):
     def _run(self):
 
         if not isfile('%s.pv' % (self.name)):
-            self.instruction = 'consel %s.rmt' % (self.name)
+            self.instruction = '%s/consel %s.rmt' % (self.consel_path,self.name)
             self._out = self.run()
         self.pv = '%s.pv' % (self.name)
 
     def _getAU(self):
 
-        self.instruction = 'catpv %s' % (self.pv)
+        self.instruction = '%s/catpv %s' % (self.consel_path, self.pv)
         pvout = self.run()
         for line in pvout.split('\n'):
             spl = line.split()
@@ -127,6 +129,9 @@ class consel_2(executable):
             self.auvals.append(it)
             if it[1] >= 0.05: self.interval.addTree(self.treeset[it[0]])
             else: self.rejected.addTree(self.treeset[it[0]])
+        with open(self.name + ".consel", "w") as consel_out:
+            for line in pvout:
+                consel_out.write(line)
         self._out = pvout
 
     def getRejected(self):
@@ -149,15 +154,24 @@ class consel_2(executable):
         :return: a :class:`.tree.treeSet` object
 
         '''
-
-        with aTemporaryDirectory(L_TEMPDIR):
-            if not isfile('%s.trees.sitelh' % (self.name)):
-                self.treefile = self.treeset.toTreeFile(self.name + '.trees')
-                self.treepuzz = treepuzzle(self.alignment,self.treefile)
-                self.sitelh   = self.treepuzz.getSiteLikelihoodFile()
-            else: self.sitelh = '%s.trees.sitelh' % (self.name)
-            self._convertRawData()
-            self._createReplicates()
-            self._run()
-            self._getAU()
+        if not isfile('%s.trees.sitelh' % (self.name)):
+            self.treefile = self.treeset.toTreeFile(self.name + '.trees')
+            self.sitelh = treepuzzle(self.alignment,self.treefile).getSiteLikelihoodFile()
+        else: self.sitelh = '%s.trees.sitelh' % (self.name)
+        self._convertRawData()
+        self._createReplicates()
+        self._run()
+        self._getAU()
         return self.interval
+
+    def getLog(self):
+        log = []
+        self._convertRawData()
+        log.append(self.instruction)
+        self._createReplicates()
+        log.append(self.instruction)
+        self._run()
+        log.append(self.instruction)
+        self._getAU()
+        log.append(self.instruction)
+        return log
