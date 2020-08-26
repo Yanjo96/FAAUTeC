@@ -25,7 +25,7 @@ except ImportError:
 
 __author__ = 'Nils Jenke; Yannick Hartmaring'
 __copyright__ = ''
-__info__ = 'TreeTopology'
+__info__ = 'PlastomeGeneCongruenceTests'
 
 #############
 # DEBUGGING #

@@ -106,7 +106,7 @@ def plastomeGeneCongruenceTests(alignment,
                      "## RAxML"]
 
         start = time.time()
-        log = log + pylogeny(ali, constraint, consel_path, model, gene)
+        log = log + raxml(ali, constraint, consel_path, model, gene)
         pylogeny_runtime = time.time() - start
 
 
@@ -257,6 +257,28 @@ def iqtree(alignment, constraint, gene_name):
     log.append(commandline("iqtree -s "+ alignment +" -m GTR+I+G -g "+ constraint + "/constraints_hypothesisC.txt -pre " + gene_name + "_IQTree_hypoC -quiet"))
     log.append(commandline("cat " + gene_name + "_IQTree_unconst.treefile " + gene_name + "_IQTree_hypoA.treefile " + gene_name + "_IQTree_hypoB.treefile " + gene_name + "_IQTree_hypoC.treefile > " + gene_name + "_COMBINED.tre"))
     log.append(commandline("iqtree -s "+ alignment +" -m GTR+I+G -z " + gene_name + "_COMBINED.tre -te " + gene_name + "_IQTree_unconst.treefile -zb 10000 -au -pre " + gene_name + "_IQTree -quiet"))
+    return log
+
+def raxml(alignment, constraint, consel_path, model, gene_name):
+    log = []
+    log.append(commandline("raxmlHPC -s " + alignment + " -n withoutConstraints_" + gene_name + " -m  " + model + " -p 10000 -w ."))
+    log.append(commandline("raxmlHPC -s " + alignment + " -n hypothesisA_" + gene_name + " -m " + model + " -g " + constraint + "/_hypothesisA.txt -p 10000 -w ."))
+    log.append(commandline("raxmlHPC -s " + alignment + " -n hypothesisB_" + gene_name + " -m " + model + " -g " + constraint + "/_hypothesisB.txt -p 10000 -w ."))
+    log.append(commandline("raxmlHPC -s " + alignment + " -n hypothesisC_" + gene_name + " -m " + model + " -g " + constraint + "/_hypothesisC.txt -p 10000 -w ."))
+    log.append(commandline("cat RAxML_bestTree.withoutConstraints_" + gene_name + " RAxML_bestTree.hypothesisA_" + gene_name + " RAxML_bestTree.hypothesisB_" + gene_name + " RAxML_bestTree.hypothesisC_" + gene_name + " > " + gene_name + "_COMBINED.tre"))
+    log.append(commandline("raxmlHPC -s " + alignment + " -n " + gene_name + ".trees.sitelh -m "+ model + " -f g -t RAxML_bestTree.withoutConstraints_" + gene_name + " -z " + gene_name + "_COMBINED.tre -p 10000 -w ."))
+
+    log.append("\n## CONSEL")
+
+    a = ali(alignment)
+    treeset = treeSet()
+    with open(gene_name + '_COMBINED.tre', "r") as multitree:
+        for tree in multitree:
+            treeset.addTreeByNewick(tree.strip())
+
+    log.append(commandline("mv RAxML_perSiteLLs." + gene_name + ".trees.sitelh RAxML_perSiteLLs_" + gene_name + ".trees.sitelh"))
+
+
     return log
 
 def pylogeny(alignment, constraint, consel_path, model, gene_name):

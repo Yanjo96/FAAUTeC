@@ -1,0 +1,396 @@
+This is XeTeX, Version 3.14159265-2.6-0.99998 (TeX Live 2017/Debian) (preloaded format=xelatex 2019.7.13)  3 DEC 2019 12:22
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**output/SUMMARY/likelihoods_table.tex
+(./output/SUMMARY/likelihoods_table.tex
+LaTeX2e <2017-04-15>
+Babel <3.18> and hyphenation patterns for 84 language(s) loaded.
+(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+(/usr/share/texlive/texmf-dist/tex/latex/colortbl/colortbl.sty
+Package: colortbl 2012/02/13 v1.0a Color table columns (DPC)
+
+(/usr/share/texlive/texmf-dist/tex/latex/tools/array.sty
+Package: array 2016/10/06 v2.4d Tabular extension package (FMi)
+\col@sep=\dimen103
+\extrarowheight=\dimen104
+\NC@list=\toks14
+\extratabsurround=\skip43
+\backup@length=\skip44
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/color.sty
+Package: color 2016/07/10 v1.1e Standard LaTeX Color (DPC)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package color Info: Driver file: xetex.def on input line 147.
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-def/xetex.def
+File: xetex.def 2017/06/24 v5.0h Graphics/color driver for xetex
+))
+\everycr=\toks15
+\minrowclearance=\skip45
+)
+(/usr/share/texlive/texmf-dist/tex/latex/geometry/geometry.sty
+Package: geometry 2010/09/12 v5.6 Page Geometry
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks16
+)
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ifpdf.sty
+Package: ifpdf 2017/03/15 v3.2 Provides the ifpdf switch
+)
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ifvtex.sty
+Package: ifvtex 2016/05/16 v1.6 Detect VTeX and its facilities (HO)
+Package ifvtex Info: VTeX not detected.
+)
+(/usr/share/texlive/texmf-dist/tex/generic/ifxetex/ifxetex.sty
+Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
+)
+\Gm@cnth=\count87
+\Gm@cntv=\count88
+\c@Gm@tempcnt=\count89
+\Gm@bindingoffset=\dimen105
+\Gm@wd@mp=\dimen106
+\Gm@odd@mp=\dimen107
+\Gm@even@mp=\dimen108
+\Gm@layoutwidth=\dimen109
+\Gm@layoutheight=\dimen110
+\Gm@layouthoffset=\dimen111
+\Gm@layoutvoffset=\dimen112
+\Gm@dimlist=\toks17
+)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/longtable.sty
+Package: longtable 2014/10/28 v4.11 Multi-page Table package (DPC)
+\LTleft=\skip46
+\LTright=\skip47
+\LTpre=\skip48
+\LTpost=\skip49
+\LTchunksize=\count90
+\LTcapwidth=\dimen113
+\LT@head=\box26
+\LT@firsthead=\box27
+\LT@foot=\box28
+\LT@lastfoot=\box29
+\LT@cols=\count91
+\LT@rows=\count92
+\c@LT@tables=\count93
+\c@LT@chunks=\count94
+\LT@p@ftn=\toks18
+)
+(/usr/share/texlive/texmf-dist/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2016/05/11 v2.12 LaTeX color extensions (UK)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: xetex.def on input line 225.
+LaTeX Info: Redefining \color on input line 709.
+\rownum=\count95
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1348.
+Package xcolor Info: Model `RGB' extended on input line 1364.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1366.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1367.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1368.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1370.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1371.
+)
+No file likelihoods_table.aux.
+\openout1 = `likelihoods_table.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 6.
+LaTeX Font Info:    ... okay on input line 6.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 6.
+LaTeX Font Info:    ... okay on input line 6.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 6.
+LaTeX Font Info:    ... okay on input line 6.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 6.
+LaTeX Font Info:    ... okay on input line 6.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 6.
+LaTeX Font Info:    ... okay on input line 6.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 6.
+LaTeX Font Info:    ... okay on input line 6.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 6.
+LaTeX Font Info:    ... okay on input line 6.
+*geometry* driver: auto-detecting
+*geometry* detected driver: xetex
+*geometry* verbose mode - [ preamble ] result:
+* driver: xetex
+* paper: custom
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: 
+* h-part:(L,W,R)=(2.0pt, 593.50787pt, 2.0pt)
+* v-part:(T,H,B)=(2.0pt, 841.04684pt, 2.0pt)
+* \paperwidth=597.50787pt
+* \paperheight=845.04684pt
+* \textwidth=593.50787pt
+* \textheight=841.04684pt
+* \oddsidemargin=-70.26999pt
+* \evensidemargin=-70.26999pt
+* \topmargin=-107.26999pt
+* \headheight=12.0pt
+* \headsep=25.0pt
+* \topskip=10.0pt
+* \footskip=30.0pt
+* \marginparwidth=57.0pt
+* \marginparsep=11.0pt
+* \columnsep=10.0pt
+* \skip\footins=9.0pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 13.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 13.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 13.
+
+Overfull \hbox (3.7235pt too wide) in paragraph at lines 14--14
+[]|\TU/lmr/m/it/8 matK| 
+ []
+
+
+Overfull \hbox (2.8915pt too wide) in paragraph at lines 16--16
+[]|\TU/lmr/m/it/8 rps16| 
+ []
+
+
+Overfull \hbox (1.3075pt too wide) in paragraph at lines 18--18
+[]|\TU/lmr/m/it/8 psbK| 
+ []
+
+
+Overfull \hbox (0.9635pt too wide) in paragraph at lines 26--26
+[]|\TU/lmr/m/it/8 atpH| 
+ []
+
+
+Overfull \hbox (4.95549pt too wide) in paragraph at lines 32--32
+[]|\TU/lmr/m/it/8 rpoC2| 
+ []
+
+
+Overfull \hbox (4.6995pt too wide) in paragraph at lines 34--34
+[]|\TU/lmr/m/it/8 rpoC1| 
+ []
+
+
+Overfull \hbox (2.4515pt too wide) in paragraph at lines 40--40
+[]|\TU/lmr/m/it/8 psbM| 
+ []
+
+
+Overfull \hbox (0.62749pt too wide) in paragraph at lines 42--42
+[]|\TU/lmr/m/it/8 psbD| 
+ []
+
+
+Overfull \hbox (0.9075pt too wide) in paragraph at lines 44--44
+[]|\TU/lmr/m/it/8 psbC| 
+ []
+
+
+Overfull \hbox (2.50749pt too wide) in paragraph at lines 48--48
+[]|\TU/lmr/m/it/8 rps14| 
+ []
+
+
+Overfull \hbox (0.6995pt too wide) in paragraph at lines 50--50
+[]|\TU/lmr/m/it/8 psaB| 
+ []
+
+
+Overfull \hbox (0.8675pt too wide) in paragraph at lines 52--52
+[]|\TU/lmr/m/it/8 psaA| 
+ []
+
+
+Overfull \hbox (0.97949pt too wide) in paragraph at lines 58--58
+[]|\TU/lmr/m/it/8 ndhJ| 
+ []
+
+
+Overfull \hbox (3.0595pt too wide) in paragraph at lines 60--60
+[]|\TU/lmr/m/it/8 ndhK| 
+ []
+
+
+Overfull \hbox (2.6595pt too wide) in paragraph at lines 62--62
+[]|\TU/lmr/m/it/8 ndhC| 
+ []
+
+
+Overfull \hbox (0.62749pt too wide) in paragraph at lines 70--70
+[]|\TU/lmr/m/it/8 accD| 
+ []
+
+
+Overfull \hbox (3.0595pt too wide) in paragraph at lines 76--76
+[]|\TU/lmr/m/it/8 cemA| 
+ []
+
+
+Overfull \hbox (1.5395pt too wide) in paragraph at lines 94--94
+[]|\TU/lmr/m/it/8 rpl33| 
+ []
+
+
+Overfull \hbox (2.78749pt too wide) in paragraph at lines 96--96
+[]|\TU/lmr/m/it/8 rps18| 
+ []
+
+
+Overfull \hbox (1.4755pt too wide) in paragraph at lines 98--98
+[]|\TU/lmr/m/it/8 rpl20| 
+ []
+
+
+Overfull \hbox (0.84349pt too wide) in paragraph at lines 102--102
+[]|\TU/lmr/m/it/8 psbT| 
+ []
+
+
+Overfull \hbox (1.17949pt too wide) in paragraph at lines 104--104
+[]|\TU/lmr/m/it/8 psbN| 
+ []
+
+
+Overfull \hbox (1.17949pt too wide) in paragraph at lines 106--106
+[]|\TU/lmr/m/it/8 psbH| 
+ []
+
+
+Overfull \hbox (0.53949pt too wide) in paragraph at lines 112--112
+[]|\TU/lmr/m/it/8 rpoA| 
+ []
+
+
+Overfull \hbox (2.50749pt too wide) in paragraph at lines 114--114
+[]|\TU/lmr/m/it/8 rps11| 
+ []
+
+
+Overfull \hbox (1.5715pt too wide) in paragraph at lines 116--116
+[]|\TU/lmr/m/it/8 rpl36| 
+ []
+
+
+Overfull \hbox (1.1875pt too wide) in paragraph at lines 122--122
+[]|\TU/lmr/m/it/8 rpl14| 
+ []
+
+
+Overfull \hbox (1.5715pt too wide) in paragraph at lines 124--124
+[]|\TU/lmr/m/it/8 rpl16| 
+ []
+
+
+Overfull \hbox (1.4435pt too wide) in paragraph at lines 128--128
+[]|\TU/lmr/m/it/8 rpl22| 
+ []
+
+
+Overfull \hbox (2.78749pt too wide) in paragraph at lines 130--130
+[]|\TU/lmr/m/it/8 rps19| 
+ []
+
+[1
+
+]
+Overfull \hbox (1.5395pt too wide) in paragraph at lines 134--134
+[]|\TU/lmr/m/it/8 rpl23| 
+ []
+
+
+Overfull \hbox (2.01149pt too wide) in paragraph at lines 138--138
+[]|\TU/lmr/m/it/8 ndhB| 
+ []
+
+
+Overfull \hbox (2.76349pt too wide) in paragraph at lines 142--142
+[]|\TU/lmr/m/it/8 rps12| 
+ []
+
+
+Overfull \hbox (1.9555pt too wide) in paragraph at lines 144--144
+[]|\TU/lmr/m/it/8 ndhF| 
+ []
+
+
+Overfull \hbox (1.4435pt too wide) in paragraph at lines 146--146
+[]|\TU/lmr/m/it/8 rpl32| 
+ []
+
+
+Overfull \hbox (2.37949pt too wide) in paragraph at lines 150--150
+[]|\TU/lmr/m/it/8 ndhD| 
+ []
+
+
+Overfull \hbox (1.3475pt too wide) in paragraph at lines 152--152
+[]|\TU/lmr/m/it/8 psaC| 
+ []
+
+
+Overfull \hbox (2.0595pt too wide) in paragraph at lines 154--154
+[]|\TU/lmr/m/it/8 ndhE| 
+ []
+
+
+Overfull \hbox (2.6595pt too wide) in paragraph at lines 156--156
+[]|\TU/lmr/m/it/8 ndhG| 
+ []
+
+
+Overfull \hbox (2.17949pt too wide) in paragraph at lines 160--160
+[]|\TU/lmr/m/it/8 ndhA| 
+ []
+
+
+Overfull \hbox (2.93149pt too wide) in paragraph at lines 162--162
+[]|\TU/lmr/m/it/8 ndhH| 
+ []
+
+
+Overfull \hbox (2.87549pt too wide) in paragraph at lines 164--164
+[]|\TU/lmr/m/it/8 rps15| 
+ []
+
+[2] (output/SUMMARY/likelihoods_table.aux) ) 
+Here is how much of TeX's memory you used:
+ 1553 strings out of 493007
+ 20011 string characters out of 6136719
+ 219100 words of memory out of 5000000
+ 5554 multiletter control sequences out of 15000+600000
+ 5487 words of font info for 23 fonts, out of 8000000 for 9000
+ 1348 hyphenation exceptions out of 8191
+ 34i,7n,35p,241b,208s stack positions out of 5000i,500n,10000p,200000b,80000s
+
+Output written on output/SUMMARY/likelihoods_table.pdf (2 pages).
