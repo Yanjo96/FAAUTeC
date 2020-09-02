@@ -10,6 +10,10 @@ python3 setup.py test     # Testing
 ## Requirements
 * RAxML (https://github.com/stamatak/standard-RAxML)
 * CONSEL (https://github.com/shimo-lab/consel)
+* Python3
+* Biopython
+* Dendropy
+* mmv
 
 ## USAGE
 #### On Linux
