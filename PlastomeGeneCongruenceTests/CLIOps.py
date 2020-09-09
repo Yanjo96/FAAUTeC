@@ -74,6 +74,12 @@ class CLI():
                             default="GTRGAMMAI",
                             required=False)
 
+        optional.add_argument('--latex',
+                             help='',
+                             default=False,
+                             action='store_true',
+                             required=False)
+
         optional.add_argument('--version',
                             help='print version number and exit',
                             action='version',
@@ -84,7 +90,8 @@ class CLI():
         PlastomeGeneCongruenceTestsMain.plastomeGeneCongruenceTests(args.alignment,
                                                                     args.constraint,
                                                                     args.consel,
-                                                                    args.model)
+                                                                    args.model,
+                                                                    args.latex)
 
 ########
 # MAIN #

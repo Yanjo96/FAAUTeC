@@ -43,7 +43,8 @@ __version__ = '0.2'
 def plastomeGeneCongruenceTests(alignment,
                  constraint_path,
                  consel_path,
-                 model):
+                 model,
+                 latex):
 
     os.system("mkdir output/")
     os.system("mkdir output/SUMMARY")
@@ -54,33 +55,8 @@ def plastomeGeneCongruenceTests(alignment,
     treeFile_raxml = open("output/SUMMARY/raxml_hypoTreeShortestDistUnconstTree.tre","w")
     treeFile_iqtree = open("output/SUMMARY/iqree_hypoTreeShortestDistUnconstTree.tre","w")
     auFile = open("output/SUMMARY/au_runtime_table.csv","w")
-    #latexFile = open("output/SUMMARY/au_runtime_table.tex","w")
-    #llsFile = open("output/SUMMARY/likelihoods_table.tex","w")
 
-    #latexFile.write("\\documentclass[a4paper]{article}\n")
-    #latexFile.write("\\usepackage{colortbl, geometry}\n")
-    #latexFile.write("\\usepackage[cmyk,table]{xcolor}\n")
-    #latexFile.write("\\geometry{paperheight=297mm, paperwidth=210mm, margin=2pt}\n")
-    #latexFile.write("\\pagenumbering{gobble}\n")
-    #latexFile.write("\\begin{document}\n")
-    #latexFile.write("\\footnotesize\n")
-    #latexFile.write("\\begin{tabular}{p{0.03\\linewidth}|p{0.095\\linewidth}p{0.095\\linewidth}p{0.095\\linewidth}|p{0.095\\linewidth}p{0.095\\linewidth}p{0.095\\linewidth}|p{0.095\\linewidth}p{0.095\\linewidth}}\n")
-    #latexFile.write("gene & \\multicolumn{3}{c}{RAxML}  & \\multicolumn{3}{c}{IQTree} & \\multicolumn{2}{c}{Runtime in seconds}\\\\\n")
-    #latexFile.write(" & Hypothesis A & Hypothesis B & Hypothesis C & Hypothesis A & Hypothesis B & Hypothesis C & RAxML & IQTree\\\\\n")
-
-    #llsFile.write("\\documentclass[a4paper]{article}\n")
-    #llsFile.write("\\usepackage{colortbl, geometry, longtable}\n")
-    #llsFile.write("\\usepackage[cmyk,table]{xcolor}\n")
-    #llsFile.write("\\geometry{paperheight=297mm, paperwidth=210mm, margin=2pt}\n")
-    #llsFile.write("\\pagenumbering{gobble}\n")
-    #llsFile.write("\\begin{document}\n")
-    #llsFile.write("\\footnotesize\n")
-    #llsFile.write("\\begin{longtable}{p{0.03\\linewidth}|p{0.095\\linewidth}p{0.095\\linewidth}p{0.095\\linewidth}p{0.095\\linewidth}|p{0.095\\linewidth}p{0.095\\linewidth}p{0.095\\linewidth}p{0.095\\linewidth}}\n")
-    #llsFile.write("gene & \\multicolumn{4}{c}{Pylogeny} & \\multicolumn{4}{c}{IQTree}\\\\\n")
-    #llsFile.write(" & Unconstraint & Hypothesis A & Hypothesis B & Hypothesis A & Unconstraint & Hypothesis A & Hypothesis B & Hypothesis C\\\\\n")
-    #llsFile.write("\\endhead\n")
-
-    auFile.write("gene," + ''.join(["hypo" + str(i) + "_consel," for i in range(len(constraints))]) + ''.join(["hypo" + str(i) + "_iqtree," for i in range(len(constraints))]) + "runtime_consel,runtime_iqtree\n")
+    auFile.write("gene," + ''.join(["consel_hypo" + str(i) + ",iqtree_hypo" + str(i) + "," for i in range(len(constraints))]) + "runtime_consel,runtime_iqtree\n")
 
     alis = os.listdir(alignment)
     colored = 0
@@ -126,7 +102,7 @@ def plastomeGeneCongruenceTests(alignment,
 
         start = time.time()
         log = log + PylOps.consel(ali, consel_path, model, gene)
-        consel_runtime = time.time() - start
+        consel_runtime = round(time.time() - start,3)
 
         ## Save the AU Test values to a variable
         au_consel = [0] * (len(constraints) + 1)
@@ -154,8 +130,8 @@ def plastomeGeneCongruenceTests(alignment,
         log = log + ["\n",
                      "# Calculate AU-Test with IQTree"]
         start = time.time()
-        log = log + PylOps.iqtree(ali, gene)
-        iqtree_runtime = time.time() - start
+        log = log + PylOps.iqtree_autest(ali, gene)
+        iqtree_runtime = round(time.time() - start,3)
 
         #trees_iqtree = []
         #with open(gene + '_COMBINED.tre', "r") as multitree:
@@ -190,13 +166,15 @@ def plastomeGeneCongruenceTests(alignment,
 
         #treeFile_iqtree.write(gene + place[best_iqtree] + " " + trees_iqtree[best_iqtree] + "\n")
 
+        ## mark values below significance level
         for i in range(len(au_iqtree)):
             if au_iqtree[i] <= 0.05:
                  au_iqtree[i] = str(au_iqtree[i]) + "*"
 
-        #au_iqtree[best_iqtree] = str(au_iqtree[best_iqtree]) + "s"
+        ## mark the tree with the smallest euclidic distance
+        au_iqtree[best_tree] = str(au_iqtree[best_tree]) + "s"
 
-        auFile.write(gene + "," + ''.join([str(au_consel[i]) + "," for i in range(len(constraints))]) + ''.join([str(au_iqtree[i]) + "," for i in range(len(constraints))]) + str(consel_runtime) + "," + str(iqtree_runtime) + "\n")
+        auFile.write(gene + "," + ''.join([str(au_consel[i]) + "," + str(au_iqtree[i]) + "," for i in range(len(constraints))]) + str(consel_runtime) + "," + str(iqtree_runtime) + "\n")
         #if colored % 2 == 0:
         #    latexFile.write(" \\rowcolor{black!20} ")
         #    llsFile.write(" \\rowcolor{black!20} ")
@@ -231,6 +209,9 @@ def plastomeGeneCongruenceTests(alignment,
     treeFile_raxml.close()
     treeFile_iqtree.close()
     auFile.close()
+
+    if(latex):
+        PylOps.createLatex(len(constraints))
 
     #os.system("xelatex -output-directory output/SUMMARY/ output/SUMMARY/au_runtime_table.tex ")
     #os.system("xelatex -output-directory output/SUMMARY/ output/SUMMARY/likelihoods_table.tex")

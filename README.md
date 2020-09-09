@@ -14,9 +14,10 @@ python3 setup.py test     # Testing
 * Python3
 * Biopython
 * Dendropy
-* mmv
 
 ## USAGE
+For a correct run I would recommend to specify the complete paths.
+
 #### On Linux
 ```
 ALIGN=examples/input/FASTA/
@@ -25,3 +26,16 @@ CONSL=path/to/consel
 
 python3 scripts/treetopology_launcher_CLI.py -a $INPUT -c $CONST --consel $CONSL
 ```
+
+#### On Windows
+The program do not work on Windows currently.
+
+## TODO
+* IQTree2 support
+* LaTeX Tables optional
+* Different ML Tree Calculation
+* Make the setup.py working
+* Find a better name for the program
+* rename the PylogenyOps.py file
+* Check requirements
+* Windows support
