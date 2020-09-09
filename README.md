@@ -10,6 +10,7 @@ python3 setup.py test     # Testing
 ## Requirements
 * RAxML (https://github.com/stamatak/standard-RAxML)
 * CONSEL (https://github.com/shimo-lab/consel)
+* IQTree (http://www.iqtree.org/)
 * Python3
 * Biopython
 * Dendropy
@@ -18,10 +19,9 @@ python3 setup.py test     # Testing
 ## USAGE
 #### On Linux
 ```
-ALIGN=examples/input/TestInput1.nex
-CONST=examples/input/TestConstraints.txt
+ALIGN=examples/input/FASTA/
+CONST=examples/input/Constraint/tree_hypothesis.txt
 CONSL=path/to/consel
-OTPUT='output_name'
 
-python3 scripts/treetopology_launcher_CLI.py -a $INPUT -c $METAD --consel $CONSL -o $OTPUT
+python3 scripts/treetopology_launcher_CLI.py -a $INPUT -c $CONST --consel $CONSL
 ```
