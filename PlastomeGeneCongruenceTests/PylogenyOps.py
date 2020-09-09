@@ -92,7 +92,7 @@ def commandline(command):
     os.system(command)
     return command
 
-def createLatex(constNumber):
+def createLatex(constNumber, programs):
     latexFile = open("output/SUMMARY/au_runtime_table.tex","w")
     latexFile.write("\\documentclass[a4paper]{article}\n")
     latexFile.write("\\usepackage{colortbl, geometry}\n")
@@ -101,9 +101,10 @@ def createLatex(constNumber):
     latexFile.write("\\pagenumbering{gobble}\n")
     latexFile.write("\\begin{document}\n")
     latexFile.write("\\footnotesize\n")
-    latexFile.write("\\begin{tabular}{|l|" + ''.join(["rr|" for i in range(constNumber+1)]) + "}\\\\\n")
-    latexFile.write("gene " + ''.join([" & \\multicolumn{2}{c}{Hypothesis " + str(i) + "}" for i in range(constNumber)]) + " & \\multicolumn{2}{c}{Runtime in seconds}\\\\\n")
-    latexFile.write(''.join([" & CONSEL & IQTree " for i in range(constNumber+1)]) + "\\\\\n")
+    latexFile.write("\\begin{tabular}{l|" + ''.join(["r" * len(programs) for i in range(constNumber+1)]) + "}\\\\\n")
+    latexFile.write("gene " + ''.join([" & \\multicolumn{" + str(len(programs)) + "}{c}{Hypothesis " + str(i) + "}" for i in range(constNumber)]) + " & \\multicolumn{" + str(len(programs)) +"}{c}{Runtime in seconds}\\\\\n")
+    latexFile.write("\\hline\\\\\n")
+    latexFile.write(' & ' + '&'.join(['&'.join([program for program in programs]) for i in range(constNumber+1)]) + "\\\\\n")
 
     #llsFile = open("output/SUMMARY/likelihoods_table.tex","w")
     auFile = open("output/SUMMARY/au_runtime_table.csv", "r")
@@ -128,3 +129,5 @@ def createLatex(constNumber):
     #llsFile.write("\\endhead\n")
 
     latexFile.close()
+
+    os.system("xelatex -output-directory output/SUMMARY/ output/SUMMARY/au_runtime_table.tex ")

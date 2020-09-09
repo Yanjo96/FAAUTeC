@@ -32,7 +32,7 @@ The program do not work on Windows currently.
 
 ## TODO
 * IQTree2 support
-* LaTeX Tables optional
+* Make Latex pretty again
 * Different ML Tree Calculation
 * Make the setup.py working
 * Find a better name for the program

@@ -74,6 +74,11 @@ class CLI():
                             default="GTRGAMMAI",
                             required=False)
 
+        optional.add_argument('--iqtree2',
+                            help='absolute path to the iqtree2 executable',
+                            default=False,
+                            required=False)
+
         optional.add_argument('--latex',
                              help='',
                              default=False,
@@ -91,6 +96,7 @@ class CLI():
                                                                     args.constraint,
                                                                     args.consel,
                                                                     args.model,
+                                                                    args.iqtree2,
                                                                     args.latex)
 
 ########
