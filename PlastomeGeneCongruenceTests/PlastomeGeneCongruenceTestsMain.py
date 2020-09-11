@@ -44,6 +44,7 @@ def plastomeGeneCongruenceTests(alignment,
                  constraint_path,
                  consel_path,
                  model,
+                 mlcalc,
                  iqtree2_path,
                  latex):
 
@@ -74,30 +75,57 @@ def plastomeGeneCongruenceTests(alignment,
                "# " + gene]
 
         ### Create a clear file system
-        log.append(PylOps.commandline("mkdir output/" + gene))
-        log.append(PylOps.commandline("mkdir output/" + gene + "/01_input"))
-        log.append(PylOps.commandline("mkdir output/" + gene + "/02_output_RAxML"))
-        log.append(PylOps.commandline("mkdir output/" + gene + "/03a_output_CONSEL"))
-        log.append(PylOps.commandline("mkdir output/" + gene + "/03b_output_IQTree"))
+        os.mkdir("output/" + gene)
+        os.mkdir("output/" + gene + "/01_input")
+        os.mkdir("output/" + gene + "/02_output_" + mlcalc)
+        os.mkdir("output/" + gene + "/03a_output_CONSEL")
+        os.mkdir("output/" + gene + "/03b_output_IQTree")
+
         if(iqtree2_path):
             log.append(PylOps.commandline("mkdir output/" + gene + "/03c_output_IQTree2"))
 
         log.append(PylOps.commandline("cp " + ali + " output/" + gene + "/01_input/"))
 
-        log = log + ["\n",
-                     "# Calculate ML-Trees with RAxML"]
+        if(mlcalc == "RAxML"):
+            log = log + ["\n",
+                        "# Calculate ML-Trees with RAxML"]
 
-        ### Calculate the ML-Trees with RAxML
-        log = log + PylOps.raxml(ali, constraints, model, gene)
+            ### Calculate the ML-Trees with RAxML
+            log = log + PylOps.raxml(ali, constraints, model, gene)
 
-        ### Find Tree which has the smallest euclidic distance to
-        ### to the unconstraint tree
-        trees = []
-        with open('RAxML_' + gene + '_COMBINED.tre', "r") as multitree:
-            for tree in multitree:
-                trees.append(tree.strip())
-        best_tree = PylOps.findBestTree(trees)
-        trees = trees[1:]
+            ### Find Tree which has the smallest euclidic distance to
+            ### to the unconstraint tree
+            trees = []
+            with open(gene + '_COMBINED.tre', "r") as multitree:
+                for tree in multitree:
+                    trees.append(tree.strip())
+            best_tree = PylOps.findBestTree(trees)
+            trees = trees[1:]
+
+            log.append(PylOps.commandline("mv RAxML_* output/" + gene + "/02_output_RAxML/"))
+
+        elif(mlcalc == "IQTree"):
+            log = log + ["\n",
+                        "# Calculate ML-Trees with IQTree"]
+
+            ### Calculate the ML-Trees with RAxML
+            log = log + PylOps.iqtree_mltree(ali, constraints, gene)
+
+            ### Find Tree which has the smallest euclidic distance to
+            ### to the unconstraint tree
+            trees = []
+            with open(gene + '_COMBINED.tre', "r") as multitree:
+                for tree in multitree:
+                    trees.append(tree.strip())
+            best_tree = PylOps.findBestTree(trees)
+            trees = trees[1:]
+
+            log.append(PylOps.commandline("mv " + gene + "_IQTree* output/" + gene + "/02_output_IQTree/"))
+
+        else:
+            print("Error: The Program " + mlcalc + " is not supported to run ML Tree calculation use" +
+                  " 'RAxML' or 'IQTree' instead.")
+            break
 
         ## write the best tree to the best tree file
         treeFile_raxml.write(gene + place[best_tree] + " " + trees[best_tree])
@@ -107,7 +135,7 @@ def plastomeGeneCongruenceTests(alignment,
                      "# Calculate AU-Test with CONSEL"]
 
         start = time.time()
-        log = log + PylOps.consel(ali, consel_path, model, gene)
+        log = log + PylOps.consel(ali, consel_path, model, gene, mlcalc)
         consel_runtime = round(time.time() - start,3)
 
         ## Save the AU Test values to a variable
@@ -131,13 +159,14 @@ def plastomeGeneCongruenceTests(alignment,
         #        llh_raxml.append(float(llh.readlines()[-1].split()[-1]))
 
         log.append(PylOps.commandline("mv " + gene + "_CONSEL* output/" + gene + "/03a_output_CONSEL/"))
+        log.append(PylOps.commandline("mv RAxML* output/" + gene + "/03a_output_CONSEL/"))
 
         # AU Test by IQTree
         print("AU Test by IQTree")
         log = log + ["\n",
                      "# Calculate AU-Test with IQTree"]
         start = time.time()
-        log = log + PylOps.iqtree_autest(ali, gene)
+        log = log + PylOps.iqtree_autest(ali, gene, mlcalc)
         iqtree_runtime = round(time.time() - start,3)
 
 
@@ -180,7 +209,7 @@ def plastomeGeneCongruenceTests(alignment,
             log = log + ["\n",
                          "# Calculate AU-Test with IQTree"]
             start = time.time()
-            log = log + PylOps.iqtree2_autest(ali, iqtree2_path, gene)
+            log = log + PylOps.iqtree2_autest(ali, iqtree2_path, gene, mlcalc)
             iqtree2_runtime = round(time.time() - start,3)
 
             au_iqtree2 = []
@@ -225,14 +254,14 @@ def plastomeGeneCongruenceTests(alignment,
         #    llsFile.write(" \\rowcolor{black!20} ")
         #llsFile.write("$\\Delta$" + " & " + "" + " & " + str(round(llh_pylogeny[0] - llh_pylogeny[1],4)) + " & " + str(round(llh_pylogeny[0] - llh_pylogeny[2],4)) + " & " + str(round(llh_pylogeny[0] - llh_pylogeny[3],4)) + " & " + "" + " & " + str(round(llh_iqtree[0] - llh_iqtree[1],4)) + " & " + str(round(llh_iqtree[0] - llh_iqtree[2],4)) + " & " + str(round(llh_iqtree[0] - llh_iqtree[3],4)) + "\\\\\n")
 
-        log.append(PylOps.commandline("mv RAxML_* output/" + gene + "/02_output_RAxML/"))
         colored = colored + 1
 
         with open("output/" + gene + "/" + gene + "_log.sh","w") as logFile:
             for line in log:
                 logFile.write(line + "\n")
 
-        #os.remove(gene + "_COMBINED.tre")
+        os.remove(gene + "_COMBINED.tre")
+        os.remove("hypo.txt")
         print(str(colored) + " / " + str(int(len(alis)/2)))
 
 

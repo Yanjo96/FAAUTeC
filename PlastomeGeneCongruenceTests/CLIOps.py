@@ -74,6 +74,11 @@ class CLI():
                             default="GTRGAMMAI",
                             required=False)
 
+        optional.add_argument('--mlcalc',
+                             help="Choose which program should run the ML-Tree calculation 'RAxML' or 'IQTree'",
+                             default='RAxML',
+                             required=False)
+
         optional.add_argument('--iqtree2',
                             help='absolute path to the iqtree2 executable',
                             default=False,
@@ -96,6 +101,7 @@ class CLI():
                                                                     args.constraint,
                                                                     args.consel,
                                                                     args.model,
+                                                                    args.mlcalc,
                                                                     args.iqtree2,
                                                                     args.latex)
 
