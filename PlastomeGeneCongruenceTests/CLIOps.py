@@ -79,6 +79,12 @@ class CLI():
                              default='RAxML',
                              required=False)
 
+        optional.add_argument('-T',
+                             '--threadNumber',
+                             help="Number of maximal used threads",
+                             default='1',
+                             required=False)
+
         optional.add_argument('--iqtree2',
                             help='absolute path to the iqtree2 executable',
                             default=False,
@@ -102,6 +108,7 @@ class CLI():
                                                                     args.consel,
                                                                     args.model,
                                                                     args.mlcalc,
+                                                                    args.threadNumber,
                                                                     args.iqtree2,
                                                                     args.latex)
 

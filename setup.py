@@ -16,8 +16,8 @@ with open("README.md", "r") as fh:
 
 setup(
     name='TreeTopology',
-    version='0.1',
-    author='Nils Jenke; Yannick Hartmaring',
+    version='0.2',
+    author='Yannick Hartmaring',
     #author_email='',
     description='Calculate if the optimal topology tree, calculated by e.g. RAxML, has a similar likelihood'
     +' as a topology tree followed certain contrains.',
@@ -40,7 +40,7 @@ setup(
     },
     packages=['TreeTopology'], # So that the subfolder 'TreeTopology' is read immediately.
     #packages = find_packages(),
-    install_requires=['biopython'],
+    install_requires=['biopython','dendropy','ete3'],
     scripts=glob.glob('scripts/*'),
     test_suite='setup.my_test_suite',
     include_package_data=True,

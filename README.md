@@ -14,9 +14,44 @@ python3 setup.py test     # Testing
 * Python3
 * Biopython
 * Dendropy
+* Optional: ete3
+* Optional: xelatex
+* Optional: IQTree2 (http://www.iqtree.org/)
+
+Don't forget to give all programs the permission to be executed
 
 ## USAGE
 For a correct run I would recommend to specify the complete paths.
+
+### Parameters
+#### Mandatory
+- `--alignment | -a`  
+ absolute path to infile; infile in PHYLIP or FASTA format; Example: /path_to_input/test.phy
+
+- `--constraint| -c`  
+ absolute path to constraint file; infile in NEWICK format; Example: /path_to_input/tree.tre
+
+- `--consel`  
+  path to consel executables
+
+#### Optional
+- `--model`  
+  Model for RAxML
+
+- `--mlcalc`  
+  Choose which program should run the ML-Tree calculation 'RAxML' or 'IQTree'
+
+- `--threadNumber | -T`  
+  Number of maximal used threads
+
+- `--iqtree2`  
+  absolute path to the iqtree2 executable
+
+- `--latex`  
+  Creates a more beautiful Table with xelatex
+
+- `--version`  
+  print version number and exit
 
 #### On Linux
 ```
@@ -31,11 +66,9 @@ python3 scripts/treetopology_launcher_CLI.py -a $INPUT -c $CONST --consel $CONSL
 The program do not work on Windows currently.
 
 ## TODO
-* IQTree2 support
 * Make Latex pretty again
-* Different ML Tree Calculation
 * Make the setup.py working
 * Find a better name for the program
 * rename the PylogenyOps.py file
 * Check requirements
-* Windows support
+* (Windows support)

@@ -45,6 +45,7 @@ def plastomeGeneCongruenceTests(alignment,
                  consel_path,
                  model,
                  mlcalc,
+                 threadNumber,
                  iqtree2_path,
                  latex):
 
@@ -69,7 +70,10 @@ def plastomeGeneCongruenceTests(alignment,
         gene = ali.split(".")[0]#.split("_")[1]
         ali = alignment + ali.strip()
         if ali.split(".")[-1] != "fasta" and ali.split(".")[-1] != "phy":
-            continue
+            if ali.split(".")[-1] == "nex":
+                ali = IOOps.Inp().nexus2fasta(ali)
+            else:
+                continue
 
         log = ["#!/bin/bash",
                "# " + gene]
@@ -91,7 +95,7 @@ def plastomeGeneCongruenceTests(alignment,
                         "# Calculate ML-Trees with RAxML"]
 
             ### Calculate the ML-Trees with RAxML
-            log = log + PylOps.raxml(ali, constraints, model, gene)
+            log = log + PylOps.raxml(ali, constraints, model, gene, threadNumber)
 
             ### Find Tree which has the smallest euclidic distance to
             ### to the unconstraint tree
@@ -109,7 +113,7 @@ def plastomeGeneCongruenceTests(alignment,
                         "# Calculate ML-Trees with IQTree"]
 
             ### Calculate the ML-Trees with RAxML
-            log = log + PylOps.iqtree_mltree(ali, constraints, gene)
+            log = log + PylOps.iqtree_mltree(ali, constraints, gene, threadNumber)
 
             ### Find Tree which has the smallest euclidic distance to
             ### to the unconstraint tree
@@ -135,7 +139,7 @@ def plastomeGeneCongruenceTests(alignment,
                      "# Calculate AU-Test with CONSEL"]
 
         start = time.time()
-        log = log + PylOps.consel(ali, consel_path, model, gene, mlcalc)
+        log = log + PylOps.consel(ali, consel_path, model, gene, mlcalc, threadNumber)
         consel_runtime = round(time.time() - start,3)
 
         ## Save the AU Test values to a variable
@@ -166,7 +170,7 @@ def plastomeGeneCongruenceTests(alignment,
         log = log + ["\n",
                      "# Calculate AU-Test with IQTree"]
         start = time.time()
-        log = log + PylOps.iqtree_autest(ali, gene, mlcalc)
+        log = log + PylOps.iqtree_autest(ali, gene, mlcalc, threadNumber)
         iqtree_runtime = round(time.time() - start,3)
 
 
@@ -209,7 +213,7 @@ def plastomeGeneCongruenceTests(alignment,
             log = log + ["\n",
                          "# Calculate AU-Test with IQTree"]
             start = time.time()
-            log = log + PylOps.iqtree2_autest(ali, iqtree2_path, gene, mlcalc)
+            log = log + PylOps.iqtree2_autest(ali, iqtree2_path, gene, mlcal, threadNumber)
             iqtree2_runtime = round(time.time() - start,3)
 
             au_iqtree2 = []
