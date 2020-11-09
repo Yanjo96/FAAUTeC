@@ -67,6 +67,7 @@ def plastomeGeneCongruenceTests(alignment,
     alis = os.listdir(alignment)
     colored = 0
     for ali in alis:
+        print(ali)
         gene = ali.split(".")[0]#.split("_")[1]
         ali = alignment + ali.strip()
         if ali.split(".")[-1] != "fasta" and ali.split(".")[-1] != "phy":
@@ -269,16 +270,11 @@ def plastomeGeneCongruenceTests(alignment,
         print(str(colored) + " / " + str(int(len(alis)/2)))
 
 
-    #llsFile.write("\\end{longtable}\n")
-    #llsFile.write("\\end{document}\n")
-
-    #llsFile.close()
-
     treeFile_raxml.close()
     treeFile_iqtree.close()
     auFile.close()
 
     if(latex):
-        PylOps.createLatex(len(constraints), programs)
+        IOOps.Outp().createLatex("output/SUMMARY/au_runtime_table.csv", latex)
 
     #os.system("xelatex -output-directory output/SUMMARY/ output/SUMMARY/likelihoods_table.tex")

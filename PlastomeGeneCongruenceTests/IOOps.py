@@ -119,3 +119,85 @@ class Outp:
             with open("RAxML_bestTree." + name + "_withConstraints", "r") as tree:
                 for line in tree:
                     multiTree.write(line)
+
+    def edit_num(self, value):
+        try:
+            value = str(value)
+            float(value.replace("s","").replace("*",""))
+            value = value.replace("s","\\textsuperscript{s}").replace("*","\\textsuperscript{*}")
+            if "*" in str(value):
+                return "\\textbf{" + str(value) + "}"
+            return value
+        except:
+            return str(value)
+
+
+    def createLatex(self, csv, output):
+        '''
+        This function converts the csv table output to a latex table
+        It is optional but creates a more fancy look to present the data
+        '''
+
+        latexFile = open(output, "w")
+        latexFile.write("\\documentclass[a4paper]{article}\n")
+        latexFile.write("\\usepackage{geometry, longtable}\n")
+        latexFile.write("\\usepackage[cmyk,table]{xcolor}\n")
+        latexFile.write("\\geometry{paperheight=297mm, paperwidth=210mm, margin=2pt}\n")
+        latexFile.write("\\pagenumbering{gobble}\n")
+        latexFile.write("\\begin{document}\n")
+        latexFile.write("\\footnotesize\n")
+        latexFile.write("\\rowcolors{1}{white}{black!20}\n")
+        with open(csv, "r") as csvFile:
+            line = csvFile.readline()
+            colNum = len(line.split(","))
+            latexFile.write("\\begin{longtable}{l" + '|c'*(colNum-1) + "}\n")
+            latexFile.write('&'.join([str(i) for i in line.strip().replace("_"," ").split(",")]) + "\\\\\n")
+            latexFile.write("\\hline\n")
+            latexFile.write("\\endhead\n")
+            for line in csvFile.readlines():
+                latexFile.write('&'.join([self.edit_num(str(i)) for i in line.strip().replace("_"," ").split(",")]) + "\\\\\n")
+
+        latexFile.write("\\end{longtable}\n")
+        latexFile.write("\\textsuperscript{s}tree with lowest distance to unconstraint tree; \\textsuperscript{*}p-value $\\leq$ 0.05\n")
+        latexFile.write("\\end{document}\n")
+        latexFile.close()
+
+    def createLatex2(self, constNumber, programs):
+        latexFile = open("output/SUMMARY/au_runtime_table.tex","w")
+        latexFile.write("\\documentclass[a4paper]{article}\n")
+        latexFile.write("\\usepackage{colortbl, geometry}\n")
+        latexFile.write("\\usepackage[cmyk,table]{xcolor}\n")
+        latexFile.write("\\geometry{paperheight=297mm, paperwidth=210mm, margin=2pt}\n")
+        latexFile.write("\\pagenumbering{gobble}\n")
+        latexFile.write("\\begin{document}\n")
+        latexFile.write("\\footnotesize\n")
+        latexFile.write("\\begin{tabular}{l|" + ''.join(["r" * len(programs) for i in range(constNumber+1)]) + "}\\\\\n")
+        latexFile.write("gene " + ''.join([" & \\multicolumn{" + str(len(programs)) + "}{c}{Hypothesis " + str(i) + "}" for i in range(constNumber)]) + " & \\multicolumn{" + str(len(programs)) +"}{c}{Runtime in seconds}\\\\\n")
+        latexFile.write("\\hline\\\\\n")
+        latexFile.write(' & ' + '&'.join(['&'.join([program for program in programs]) for i in range(constNumber+1)]) + "\\\\\n")
+
+        #llsFile = open("output/SUMMARY/likelihoods_table.tex","w")
+        auFile = open("output/SUMMARY/au_runtime_table.csv", "r")
+        au = auFile.readlines()
+        auFile.close()
+        for line in au[1:]:
+            latexFile.write(' & '.join(line.replace("_","\_").split(",")) + "\\\\n")
+
+        latexFile.write("\\end{tabular}\\\\\n")
+        latexFile.write("\\textsuperscript{s}tree with lowest distance to unconstraint tree; \\textsuperscript{*}p-value $\\leq$ 0.05\n")
+        latexFile.write("\\end{document}\n")
+        #llsFile.write("\\documentclass[a4paper]{article}\n")
+        #llsFile.write("\\usepackage{colortbl, geometry, longtable}\n")
+        #llsFile.write("\\usepackage[cmyk,table]{xcolor}\n")
+        #llsFile.write("\\geometry{paperheight=297mm, paperwidth=210mm, margin=2pt}\n")
+        #llsFile.write("\\pagenumbering{gobble}\n")
+        #llsFile.write("\\begin{document}\n")
+        #llsFile.write("\\footnotesize\n")
+        #llsFile.write("\\begin{longtable}{p{0.03\\linewidth}|p{0.095\\linewidth}p{0.095\\linewidth}p{0.095\\linewidth}p{0.095\\linewidth}|p{0.095\\linewidth}p{0.095\\linewidth}p{0.095\\linewidth}p{0.095\\linewidth}}\n")
+        #llsFile.write("gene & \\multicolumn{4}{c}{Pylogeny} & \\multicolumn{4}{c}{IQTree}\\\\\n")
+        #llsFile.write(" & Unconstraint & Hypothesis A & Hypothesis B & Hypothesis A & Unconstraint & Hypothesis A & Hypothesis B & Hypothesis C\\\\\n")
+        #llsFile.write("\\endhead\n")
+
+        latexFile.close()
+
+        os.system("xelatex -output-directory output/SUMMARY/ output/SUMMARY/au_runtime_table.tex ")

@@ -28,10 +28,17 @@ def parser():
                         help='absolute path to constraint file',
                         required=True)
 
+    parser.add_argument('-o',
+                        '--output',
+                        help='output file',
+                        default=False,
+                        required=False)
+
 
     args = parser.parse_args()
 
-    main(args.alignment,args.constraint)
+    main(args.alignment,args.constraint, args.output)
+
 
 def removableTaxa(alignment_path, allTaxa, format):
     Taxa = allTaxa.copy()
@@ -57,21 +64,31 @@ def removeTaxa(constraint_path, allTaxa, tree):
     return(tree.write(format=9))
 
 ## Main Function
-def main(alignment_path, constraint_path):
-    new_constraint_path = open(''.join(constraint_path.split(".")[:-1]) + "_new." + constraint_path.split(".")[-1], "w")
+def main(alignment_path, constraint_path, output_path):
+    if not output_path:
+        new_constraint_path = open(''.join(constraint_path.split(".")[:-1]) + "_new." + constraint_path.split(".")[-1], "w")
+    else:
+        new_constraint_path = open(output_path, "w")
     with open(constraint_path, "r") as const:
-        i = 0
         ## For each tree in tree file find the Taxa which are not part of the alignment
         for tree in const.readlines():
-            print(i)
-            allTaxa = tree.strip().replace("(","").replace(")","").replace(";","").split(",")
+            stayTaxa = tree.strip().replace("(","").replace(")","").replace(";","").split(",")
+            allTaxa = stayTaxa.copy()
             ## Find the Taxa which are part of all alignmentfiles
             for ali in os.listdir(alignment_path):
                 ali = alignment_path + "/" + ali
-                allTaxa = removableTaxa(ali, allTaxa, ali.split(".")[-1])
+                stayTaxa = removableTaxa(ali, stayTaxa, ali.split(".")[-1])
+            ## Print all removed Taxa
+            print("removed Taxa:")
+            i = 0
+            for taxa in allTaxa:
+                if taxa not in stayTaxa:
+                    i = i + 1
+                    print(taxa)
+            print("Number removed Taxa: " + str(i))
+            
             ## Write new constraint tree to file
-            i = i + 1
-            new_constraint_path.write(removeTaxa(constraint_path, allTaxa, tree) + "\n")
+            new_constraint_path.write(removeTaxa(constraint_path, stayTaxa, tree) + "\n")
     new_constraint_path.close()
 
 
