@@ -47,6 +47,8 @@ def plastomeGeneCongruenceTests(alignment,
                  mlcalc,
                  threadNumber,
                  iqtree2_path,
+                 iqtree_path,
+                 raxml_path,
                  latex):
 
     os.system("mkdir output/")
@@ -101,7 +103,7 @@ def plastomeGeneCongruenceTests(alignment,
                         "# Calculate ML-Trees with RAxML"]
 
             ### Calculate the ML-Trees with RAxML
-            log = log + PylOps.raxml(ali, constraints, model, gene, threadNumber)
+            log = log + PylOps.raxml(ali, constraints, model, gene, threadNumber, raxml_path)
 
             ### Find Tree which has the smallest euclidic distance to
             ### to the unconstraint tree
@@ -118,8 +120,8 @@ def plastomeGeneCongruenceTests(alignment,
             log = log + ["\n",
                         "# Calculate ML-Trees with IQTree"]
 
-            ### Calculate the ML-Trees with RAxML
-            log = log + PylOps.iqtree_mltree(ali, constraints, gene, threadNumber)
+            ### Calculate the ML-Trees with IQTree
+            log = log + PylOps.iqtree_mltree(ali, constraints, gene, threadNumber,iqtree_path)
 
             ### Find Tree which has the smallest euclidic distance to
             ### to the unconstraint tree
@@ -145,7 +147,7 @@ def plastomeGeneCongruenceTests(alignment,
                      "# Calculate AU-Test with CONSEL"]
 
         start = time.time()
-        log = log + PylOps.consel(ali, consel_path, model, gene, mlcalc, threadNumber)
+        log = log + PylOps.consel(ali, consel_path, model, gene, mlcalc, threadNumber, raxml_path)
         consel_runtime = round(time.time() - start,3)
 
         ## Save the AU Test values to a variable
@@ -176,7 +178,7 @@ def plastomeGeneCongruenceTests(alignment,
         log = log + ["\n",
                      "# Calculate AU-Test with IQTree"]
         start = time.time()
-        log = log + PylOps.iqtree_autest(ali, gene, mlcalc, threadNumber)
+        log = log + PylOps.iqtree_autest(ali, gene, mlcalc, threadNumber, iqtree_path)
         iqtree_runtime = round(time.time() - start,3)
 
 

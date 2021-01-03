@@ -90,6 +90,16 @@ class CLI():
                             default=False,
                             required=False)
 
+        optional.add_argument('--iqtreePath',
+                            help='absolute path to the iqtree executable',
+                            default="iqtree",
+                            required=False)
+
+        optional.add_argument('--raxmlPath',
+                            help='absolute path to the iqtree executable',
+                            default="raxmlHPC",
+                            required=False)
+
         optional.add_argument('--latex',
                              help='',
                              default=False,
@@ -110,6 +120,8 @@ class CLI():
                                                                     args.mlcalc,
                                                                     args.threadNumber,
                                                                     args.iqtree2,
+                                                                    args.iqtreePath,
+                                                                    args.raxmlPath,
                                                                     args.latex)
 
 ########
