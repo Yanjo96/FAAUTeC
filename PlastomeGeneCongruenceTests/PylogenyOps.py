@@ -1,5 +1,8 @@
 import os
 import dendropy
+from Bio import SeqIO
+from Bio.Nexus import Nexus
+from ete3 import Tree
 
 def findBestTree(treeList):
     tns = dendropy.TaxonNamespace()
@@ -37,6 +40,65 @@ def readConstraints(constraint_path):
 
     return constraints
 
+def removableTaxa(alignment_path, allTaxa, format):
+    Taxa = allTaxa.copy()
+    if format == "nex":
+        format = "nexus"
+    elif format == "phy":
+        format == "phylip"
+
+    if(format in ["fasta","nexus","phylip"]):
+        for seq_record in SeqIO.parse(alignment_path, format):
+            try:
+                Taxa.remove(seq_record.id)
+            except:
+                pass
+        for seq in Taxa:
+            try:
+                allTaxa.remove(seq)
+            except:
+                pass
+    else:
+        print("'" + alignment_path + "' is not in a supported format")
+    return allTaxa
+
+def removeTaxa(constraint_path, allTaxa, tree):
+    tree = Tree(tree)
+    tree.prune(allTaxa)
+    return(tree.write(format=9))
+
+## Main Function
+def removeGenesFromConstTree(alignment_path, constraint_path, output_path):
+    if not output_path:
+        new_constraint_path = open(''.join(constraint_path.split(".")[:-1]) + "_new." + constraint_path.split(".")[-1], "w")
+    else:
+        new_constraint_path = open(output_path, "w")
+    with open(constraint_path, "r") as const:
+        ## For each tree in tree file find the Taxa which are not part of the alignment
+        for tree in const.readlines():
+            stayTaxa = tree.strip().replace("(","").replace(")","").replace(";","").split(",")
+            allTaxa = stayTaxa.copy()
+            ## Find the Taxa which are part of all alignmentfiles
+            #try:
+            #    for ali in os.listdir(alignment_path):
+            #        ali = alignment_path + "/" + ali
+            #        stayTaxa = removableTaxa(ali, stayTaxa, ali.split(".")[-1])
+            #except:
+            stayTaxa = removableTaxa(alignment_path, stayTaxa, alignment_path.split(".")[-1])
+            ## Print all removed Taxa
+            print("removed Taxa:")
+            i = 0
+            for taxa in allTaxa:
+                if taxa not in stayTaxa:
+                    i = i + 1
+                    print(taxa)
+            print("Number removed Taxa: " + str(i))
+
+            ## Write new constraint tree to file
+            new_constraint_path.write(removeTaxa(constraint_path, stayTaxa, tree) + "\n")
+    new_constraint_path.close()
+
+
 def iqtree_autest(alignment, gene_name, mlcalc, threadNumber):
     log = []
     if(mlcalc == "RAxML"):
@@ -60,8 +122,9 @@ def iqtree_mltree(alignment, constraints, gene_name, threadNumber):
 
     for i in range(len(constraints)):
         with open("hypo.txt","w") as hypo:
-            hypo.write(constraints[i].as_string(schema="newick"))
-        log.append(commandline("iqtree -s "+ alignment +" -m GTR+I+G -g hypo.txt -pre " + gene_name + "_IQTree_hypo" + str(i) + " -quiet -nt " + threadNumber))
+            hypo.write(constraints[i].as_string(schema="newick", suppress_rooting=True))
+        removeGenesFromConstTree(alignment, "hypo.txt", "hypo_rem.txt")
+        log.append(commandline("iqtree -s "+ alignment +" -m GTR+I+G -g hypo_rem.txt -pre " + gene_name + "_IQTree_hypo" + str(i) + " -quiet -nt " + threadNumber))
     log.append(commandline("cat " + gene_name + "_IQTree_unconst.treefile " + ''.join([gene_name + "_IQTree_hypo" + str(i) + ".treefile " for i in range(len(constraints))]) + "> " + gene_name + "_COMBINED.tre"))
     return log
 
@@ -70,8 +133,9 @@ def raxml(alignment, constraints, model, gene_name, threadNumber):
     log.append(commandline("raxmlHPC -s " + alignment + " -n withoutConstraints_" + gene_name + " -m  " + model + " -p 10000 -w " + os.getcwd()) + " --silent -T " + threadNumber)
     for i in range(len(constraints)):
         with open("hypo.txt","w") as hypo:
-            hypo.write(constraints[i].as_string(schema="newick"))
-        log.append(commandline("raxmlHPC -s " + alignment + " -n hypothesis" + str(i) + "_" + gene_name + " -m " + model + " -g hypo.txt -p 10000 -w " + os.getcwd()) + " --silent -T " + threadNumber)
+            hypo.write(constraints[i].as_string(schema="newick", suppress_rooting=True))
+        removeGenesFromConstTree(alignment, "hypo.txt", "hypo_rem.txt")
+        log.append(commandline("raxmlHPC -s " + alignment + " -n hypothesis" + str(i) + "_" + gene_name + " -m " + model + " -g hypo_rem.txt -p 10000 -w " + os.getcwd()) + " --silent -T " + threadNumber)
 
     log.append(commandline("cat RAxML_bestTree.withoutConstraints_" + gene_name + ''.join([" RAxML_bestTree.hypothesis" + str(i) + "_" + gene_name for i in range(len(constraints))]) + " > " + gene_name + "_COMBINED.tre"))
     return log

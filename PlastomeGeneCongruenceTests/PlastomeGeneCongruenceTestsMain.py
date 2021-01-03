@@ -68,13 +68,18 @@ def plastomeGeneCongruenceTests(alignment,
     colored = 0
     for ali in alis:
         print(ali)
-        gene = ali.split(".")[0]#.split("_")[1]
+        gene = ali.split(".")[0]
         ali = alignment + ali.strip()
-        if ali.split(".")[-1] != "fasta" and ali.split(".")[-1] != "phy":
-            if ali.split(".")[-1] == "nex":
+        if ali.split(".")[-1] != "fasta":
+            if ali.split(".")[-1] == "phy":
+                ali = IOOps.Inp().phylip2fasta(ali)
+            elif ali.split(".")[-1] == "nex":
                 ali = IOOps.Inp().nexus2fasta(ali)
             else:
+                print(ali + " was skipped because the file ending is not sopprted. Supported File endings: 'fasta', 'nex', 'phy'")
                 continue
+
+        COps.checkAlignmentFile(ali)
 
         log = ["#!/bin/bash",
                "# " + gene]

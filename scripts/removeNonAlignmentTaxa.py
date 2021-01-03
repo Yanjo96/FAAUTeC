@@ -42,8 +42,13 @@ def parser():
 
 def removableTaxa(alignment_path, allTaxa, format):
     Taxa = allTaxa.copy()
-    if(format in ["fasta","nex","phy"]):
-        for seq_record in SeqIO.parse(alignment_path, "nexus"):
+    if format == "nex":
+        format = "nexus"
+    elif format == "phy"
+        format == "phylip"
+
+    if(format in ["fasta","nexus","phylip"]):
+        for seq_record in SeqIO.parse(alignment_path, format):
             try:
                 Taxa.remove(seq_record.id)
             except:
@@ -86,7 +91,7 @@ def main(alignment_path, constraint_path, output_path):
                     i = i + 1
                     print(taxa)
             print("Number removed Taxa: " + str(i))
-            
+
             ## Write new constraint tree to file
             new_constraint_path.write(removeTaxa(constraint_path, stayTaxa, tree) + "\n")
     new_constraint_path.close()

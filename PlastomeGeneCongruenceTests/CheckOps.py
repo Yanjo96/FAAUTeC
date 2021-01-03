@@ -8,6 +8,8 @@ Custom operations input and output processes
 #####################
 
 import os
+from Bio import SeqIO
+from Bio.Nexus import Nexus
 
 ###############
 # AUTHOR INFO #
@@ -27,6 +29,15 @@ __info__ = 'PlastomeGeneCongruenceTests'
 #############
 # Functions #
 #############
+
+
+def checkAlignmentFile(alignment_path):
+    nonEmptySeqs = []
+    for seq_record in SeqIO.parse(alignment_path, "fasta"):
+        if str(seq_record.seq).replace("-","") != "":
+            nonEmptySeqs.append(seq_record)
+
+    SeqIO.write(nonEmptySeqs, alignment_path, "fasta")
 
 def checkPrerequisites():
     # Check RAxML

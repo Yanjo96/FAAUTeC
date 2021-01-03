@@ -52,29 +52,19 @@ class Inp:
     def __init__(self):
         pass
 
-    def nexus2phylip(self, path_to_nex):
-        ''' This function convert a NEXUS file to PHYLIP file. '''
-        try:
-            aln = Nexus.Nexus()
-            aln.read(path_to_nex)
-            matrix = aln.matrix
-        except Nexus.NexusError as e:
-            print(e)
-            raise
-        except Exception as e:
-            msg = 'ERROR: %s:\n %s' % ('Parsing of '
-            '.nex-file unsuccessful', e)
-            warnings.warn(msg)
-            raise Exception
-        with open(path_to_nex + ".phy", 'w') as phylip:
-            phylip.write(str(aln.ntax) + " " + str(aln.nchar) + "\n")
-            print(str(aln.ntax) + " " + str(aln.nchar) + "\n")
-            for m in matrix:
-                phylip.write(str(m)[:10] + (9-len(str(m)[:9])) * " " + " ")
-                size = 10
-                parts = [str(matrix[m])[i:i+size] for i in range(0, len(str(matrix[m])), size)]
-                phylip.write(' '.join(parts) + '\n')
-        return path_to_nex + ".phy"
+    def phylip2fasta(self, path_to_phy):
+        ''' This function convert a PHYLIP file to FASTA file. '''
+        phylipFile = open(path_to_phy, "r")
+        alignment = phylipFile.readlines()
+        phylipFile.close()
+        path_to_fasta = path_to_phy.replace(".phy",".fasta")
+
+        with open(path_to_fasta, "w") as fasta:
+            for ali in alignment[1:]:
+                ali = ali.split()
+                fasta.write(">" + ali[0] + "\n")
+                fasta.write(ali[1].replace("N","-") + "\n")
+        return path_to_fasta
 
     def nexus2fasta(self, path_to_file):
         ''' This function convert a NEXUS file to FASTA file. '''
