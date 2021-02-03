@@ -221,7 +221,7 @@ def plastomeGeneCongruenceTests(alignment,
             log = log + ["\n",
                          "# Calculate AU-Test with IQTree"]
             start = time.time()
-            log = log + PylOps.iqtree2_autest(ali, iqtree2_path, gene, mlcal, threadNumber)
+            log = log + PylOps.iqtree2_autest(ali, iqtree2_path, gene, mlcalc, threadNumber)
             iqtree2_runtime = round(time.time() - start,3)
 
             au_iqtree2 = []

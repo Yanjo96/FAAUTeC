@@ -107,7 +107,7 @@ def iqtree_autest(alignment, gene_name, mlcalc, threadNumber, iqtree_path):
         log.append(commandline(iqtree_path + " -s " + alignment +" -m GTR+I+G -z " + gene_name + "_COMBINED.tre -te output/" + gene_name + "/02_output_IQTree/" + gene_name + "_IQTree_unconst.treefile -zb 10000 -au -pre " + gene_name + "_IQTree -quiet -nt " + threadNumber))
     return log
 
-def iqtree2_autest(alignment, iqtree2_path, gene_name, threadNumber):
+def iqtree2_autest(alignment, iqtree2_path, gene_name, mlcalc, threadNumber):
     log = []
     if(mlcalc == "RAxML"):
         log.append(commandline(iqtree2_path + " -s " + alignment +" -m GTR+I+G -z " + gene_name + "_COMBINED.tre -te output/" + gene_name + "/02_output_RAxML/RAxML_bestTree.withoutConstraints_" + gene_name + " -zb 10000 -au -pre " + gene_name + "_IQTree -quiet -nt " + threadNumber))
