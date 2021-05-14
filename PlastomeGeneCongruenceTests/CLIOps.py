@@ -10,12 +10,8 @@ Command-line execution
 import sys
 import os
 
-# Add specific directory to sys.path in order to import its modules
-# NOTE: THIS RELATIVE IMPORTING IS AMATEURISH.
-# NOTE: COULD THE FOLLOWING IMPORT BE REPLACED WITH 'import annonex2embl'?
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'plastomeGeneCongruenceTests'))
 
-# IMPORTANT: TFL must be after "sys.path.append"
 import PlastomeGeneCongruenceTestsMain
 import argparse
 
@@ -23,10 +19,11 @@ import argparse
 # AUTHOR INFO #
 ###############
 
-__author__ = 'Nils Jenke; Yannick Hartmaring'
-__copyright__ = 'Copyright (C) 2019 Project Gruenstaeudl'
-__info__ = 'PlastomeGeneCongruenceTests'
-__version__ = '2019.12.03'
+__author__ = 'Yannick Hartmaring'
+__ctb__ = "'Nils Jenke"
+__copyright__ = ''
+__info__ = 'FAAUTeC'
+__version__ = '0.2'
 
 #############
 # DEBUGGING #

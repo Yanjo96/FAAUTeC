@@ -1,6 +1,6 @@
 __author__ = 'Yannick Hartmaring'
 __copyright__ = 'Copyright (C) 2020 Project Gruenstaeudl'
-__info__ = 'Combine table with an equal column'
+__info__ = 'combineTables -- Combine table with an equal column'
 __version__ = '2020.10.30'
 
 import sys

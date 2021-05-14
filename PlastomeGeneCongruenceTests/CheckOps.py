@@ -17,7 +17,7 @@ from Bio.Nexus import Nexus
 
 __author__ = 'Yannick Hartmaring'
 __copyright__ = ''
-__info__ = 'PlastomeGeneCongruenceTests'
+__info__ = 'FAAUTeC'
 
 #############
 # DEBUGGING #

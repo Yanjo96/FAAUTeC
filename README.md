@@ -1,5 +1,5 @@
-# TreeTopology
-* Version: 0.1
+# FAAUTeC Fully Automated Approximately Unbiased Test Comparer
+* Version: 0.2
 
 ## INSTALLATION
 ```
@@ -47,6 +47,12 @@ For a correct run I would recommend to specify the complete paths.
 - `--iqtree2`  
   absolute path to the iqtree2 executable
 
+- `--iqtreePath`  
+  absolute path to the iqtree executable
+
+- `--raxmlPath`  
+  absolute path to the RAxML executable
+
 - `--latex`  
   Creates a more beautiful Table with xelatex
 
@@ -66,9 +72,6 @@ python3 scripts/treetopology_launcher_CLI.py -a $INPUT -c $CONST --consel $CONSL
 The program do not work on Windows currently.
 
 ## TODO
-* Make Latex pretty again
 * Make the setup.py working
-* Find a better name for the program
-* rename the PylogenyOps.py file
 * Check requirements
 * (Windows support)

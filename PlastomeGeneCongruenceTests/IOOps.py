@@ -23,9 +23,10 @@ except ImportError:
 # AUTHOR INFO #
 ###############
 
-__author__ = 'Nils Jenke; Yannick Hartmaring'
+__author__ = 'Yannick Hartmaring'
+__ctb__ = 'Nils Jenke'
 __copyright__ = ''
-__info__ = 'PlastomeGeneCongruenceTests'
+__info__ = 'FAAUTeC'
 
 #############
 # DEBUGGING #
@@ -112,9 +113,14 @@ class Outp:
 
     def edit_num(self, value):
         try:
-            value = str(value)
-            float(value.replace("s","").replace("*",""))
-            value = value.replace("s","\\textsuperscript{s}").replace("*","\\textsuperscript{*}")
+            postSigns = ''.join(list(filter(lambda x: x not in "0123456789.-e", value)))
+            postSigns = postSigns.replace("s","\\textsuperscript{s}").replace("*","\\textsuperscript{*}")
+            preSigns = ""
+            value = round(float(value.replace("s","").replace("*","")),3)
+            if value < 0.001:
+                value = 0.001
+                preSigns = preSigns + "<"
+            value = preSigns + str(value) + postSigns
             if "*" in str(value):
                 return "\\textbf{" + str(value) + "}"
             return value
@@ -130,25 +136,30 @@ class Outp:
 
         latexFile = open(output, "w")
         latexFile.write("\\documentclass[a4paper]{article}\n")
+        latexFile.write("\\usepackage[T1]{fontenc}\n")
         latexFile.write("\\usepackage{geometry, longtable}\n")
+        latexFile.write("\\usepackage{booktabs}\n")
         latexFile.write("\\usepackage[cmyk,table]{xcolor}\n")
         latexFile.write("\\geometry{paperheight=297mm, paperwidth=210mm, margin=2pt}\n")
         latexFile.write("\\pagenumbering{gobble}\n")
         latexFile.write("\\begin{document}\n")
-        latexFile.write("\\footnotesize\n")
-        latexFile.write("\\rowcolors{1}{white}{black!20}\n")
+        latexFile.write("%\\footnotesize\n")
+        latexFile.write("%\\rowcolors{1}{white}{black!20}\n")
         with open(csv, "r") as csvFile:
             line = csvFile.readline()
             colNum = len(line.split(","))
-            latexFile.write("\\begin{longtable}{l" + '|c'*(colNum-1) + "}\n")
+            latexFile.write("\\begin{longtable}{|" + ('m{' + str(round(1/colNum,3)) + '\\textwidth}|') * (colNum) + "}\n")
+            latexFile.write("\\caption[]{\\textsuperscript{s}tree with lowest distance to unconstraint tree; \\textsuperscript{*}p-value $\\leq$ 0.05\n}\\\\\n")
+            latexFile.write("\\toprule\n")
             latexFile.write('&'.join([str(i) for i in line.strip().replace("_"," ").split(",")]) + "\\\\\n")
-            latexFile.write("\\hline\n")
+            latexFile.write("\\midrule\n")
             latexFile.write("\\endhead\n")
+            latexFile.write("\\bottomrule\n")
+            latexFile.write("\\endfoot\n")
             for line in csvFile.readlines():
                 latexFile.write('&'.join([self.edit_num(str(i)) for i in line.strip().replace("_"," ").split(",")]) + "\\\\\n")
-
+        latexFile.write("\\bottomrule\n")
         latexFile.write("\\end{longtable}\n")
-        latexFile.write("\\textsuperscript{s}tree with lowest distance to unconstraint tree; \\textsuperscript{*}p-value $\\leq$ 0.05\n")
         latexFile.write("\\end{document}\n")
         latexFile.close()
 

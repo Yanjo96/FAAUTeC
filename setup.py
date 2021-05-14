@@ -15,7 +15,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name='TreeTopology',
+    name='FAAUTec',
     version='0.2',
     author='Yannick Hartmaring',
     #author_email='',
@@ -35,7 +35,7 @@ setup(
     license='BSD',
     entry_points={
         'console_scripts': [
-            'treetopology = treetopology.CLIOps:start_treetopology'
+            'faautec = faautec.CLIOps:start_faautec'
         ],
     },
     packages=['TreeTopology'], # So that the subfolder 'TreeTopology' is read immediately.

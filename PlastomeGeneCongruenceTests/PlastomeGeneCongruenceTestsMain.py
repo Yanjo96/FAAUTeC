@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.7
 
-''' Main operations in TreeTopology '''
+''' Main operations in FAAUTeC '''
 
 #####################
 # IMPORT OPERATIONS #
@@ -23,7 +23,7 @@ import CheckOps as COps
 __author__ = 'Yannick Hartmaring'
 __ctb__ = 'Nils Jenke'
 __copyright__ = ''
-__info__ = 'PlastomeGeneCongruenceTests'
+__info__ = 'FAAUTeC'
 __version__ = '0.2'
 
 
