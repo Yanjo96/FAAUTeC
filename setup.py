@@ -19,15 +19,15 @@ setup(
     version='0.2',
     author='Yannick Hartmaring',
     #author_email='',
-    description='Calculate if the optimal topology tree, calculated by e.g. RAxML, has a similar likelihood'
+    description='Calculate if the AU Test for several Implementations using IQTree and RAxML for tree inference'
     +' as a topology tree followed certain contrains.',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url='https://github.com/yanjo96/treetopology',
+    url='https://github.com/Yanjo96/FAAUTeC',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'License :: OSI Approved :: BSD License',
-        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Intended Audience :: Science/Research',
         'Topic :: Scientific/Engineering :: Bio-Informatics'
         ],
@@ -38,7 +38,7 @@ setup(
             'faautec = faautec.CLIOps:start_faautec'
         ],
     },
-    packages=['TreeTopology'], # So that the subfolder 'TreeTopology' is read immediately.
+    packages=['FAAUTeC'], # So that the subfolder 'TreeTopology' is read immediately.
     #packages = find_packages(),
     install_requires=['biopython','dendropy','ete3'],
     scripts=glob.glob('scripts/*'),

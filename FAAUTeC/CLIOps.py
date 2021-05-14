@@ -10,9 +10,9 @@ Command-line execution
 import sys
 import os
 
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'plastomeGeneCongruenceTests'))
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'FAAUTeC'))
 
-import PlastomeGeneCongruenceTestsMain
+import FAAUTeCMain
 import argparse
 
 ###############
@@ -110,20 +110,20 @@ class CLI():
 
         args = parser.parse_args()
 
-        PlastomeGeneCongruenceTestsMain.plastomeGeneCongruenceTests(args.alignment,
-                                                                    args.constraint,
-                                                                    args.consel,
-                                                                    args.model,
-                                                                    args.mlcalc,
-                                                                    args.threadNumber,
-                                                                    args.iqtree2,
-                                                                    args.iqtreePath,
-                                                                    args.raxmlPath,
-                                                                    args.latex)
+        FAAUTeCMain.faautec(args.alignment,
+                                                args.constraint,
+                                                args.consel,
+                                                args.model,
+                                                args.mlcalc,
+                                                args.threadNumber,
+                                                args.iqtree2,
+                                                args.iqtreePath,
+                                                args.raxmlPath,
+                                                args.latex)
 
 ########
 # MAIN #
 ########
 
-def start_plastomeGeneCongruenceTests():
+def start_faautec():
     CLI()
