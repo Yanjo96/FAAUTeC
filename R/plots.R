@@ -311,6 +311,18 @@ meaner <- function(data, gene, values, nRuns){
 }
 
 ########################################################################################################
+# returns the means for each AU Tester
+########################################################################################################
+medianer <- function(data, gene, values, nRuns){
+  t <- list()
+  for (i in 1:nRuns){
+    t[[i]] <- data[[i]][gene,values]
+  }
+  t <- do.call(rbind,t)
+  return(unlist(lapply(t, median)))
+}
+
+########################################################################################################
 # Plots an heatmap for all genes with most likely hypothesis
 ########################################################################################################
 whichHypo <- function(dataRAxML, dataIQTree, nRuns, hypos, path, w, h, color){
@@ -327,21 +339,21 @@ whichHypo <- function(dataRAxML, dataIQTree, nRuns, hypos, path, w, h, color){
     RAxML_IQT <- meaner(dataRAxML, gene, seq(2, nHypo*3, 3), nRuns)
     RAxML_IQT2 <- meaner(dataRAxML, gene, seq(3, nHypo*3, 3), nRuns)
 
-    whichHypo[[i+0]] <- data.frame(gene = gene, au = "IQTree CONS", hypo = which.max(IQTree_CONS))
-    whichHypo[[i+1]] <- data.frame(gene = gene, au = "IQTree IQT", hypo = which.max(IQTree_IQT))
-    whichHypo[[i+2]] <- data.frame(gene = gene, au = "IQTree IQT2", hypo = which.max(IQTree_IQT2))
+    whichHypo[[i+0]] <- data.frame(gene = gene, au = "IQTree CONS", hypo = hypos[which.max(IQTree_CONS)])
+    whichHypo[[i+1]] <- data.frame(gene = gene, au = "IQTree IQT1", hypo = hypos[which.max(IQTree_IQT)])
+    whichHypo[[i+2]] <- data.frame(gene = gene, au = "IQTree IQT2", hypo = hypos[which.max(IQTree_IQT2)])
 
-    whichHypo[[i+3]] <- data.frame(gene = gene, au = "RAxML CONS", hypo = which.max(RAxML_CONS))
-    whichHypo[[i+4]] <- data.frame(gene = gene, au = "RAxML IQT", hypo = which.max(RAxML_IQT))
-    whichHypo[[i+5]] <- data.frame(gene = gene, au = "RAxML IQT2", hypo = which.max(RAxML_IQT2))
+    whichHypo[[i+3]] <- data.frame(gene = gene, au = "RAxML CONS", hypo = hypos[which.max(RAxML_CONS)])
+    whichHypo[[i+4]] <- data.frame(gene = gene, au = "RAxML IQT1", hypo = hypos[which.max(RAxML_IQT)])
+    whichHypo[[i+5]] <- data.frame(gene = gene, au = "RAxML IQT2", hypo = hypos[which.max(RAxML_IQT2)])
   }
 
   whichHypo <- do.call(rbind, whichHypo)
   whichHypo[which(whichHypo$gene=="concatenated_125spp"),1] <-"c125spp"
 
-  t <- ggplot(whichHypo) + aes(au, gene, fill=hypo) + geom_tile() + theme_bw() + scale_fill_gradientn(colours=colortheme1, limits=c(1,nHypo)) +
+  t<- ggplot(whichHypo) + aes(au, gene, fill=hypo) + geom_tile() + theme_bw() + scale_fill_manual(values=color) +
     labs(x = "", y = "", fill="Hypo:") +
-    theme(legend.position = "right", text = element_text(size = textsize), legend.margin=margin(0,0,0,0),legend.box.margin=margin(-10,-10,-10,-10), plot.margin = unit(c(0.5, 0.2, 0.5, 0), "cm"), panel.spacing.x = unit(0.2, "lines"))
+    theme(legend.position = "top", text = element_text(size = textsize), legend.margin=margin(0,0,0,0),legend.box.margin=margin(-10,-10,-10,-10), plot.margin = unit(c(0.5, 0.2, 0.5, 0), "cm"), panel.spacing.x = unit(0.2, "lines"))
 
   ggsave(filename = path, plot = t, width=w, height=h, units="cm")
 
