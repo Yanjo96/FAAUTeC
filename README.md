@@ -65,13 +65,12 @@ ALIGN=examples/input/FASTA/
 CONST=examples/input/Constraint/tree_hypothesis.txt
 CONSL=path/to/consel
 
-python3 scripts/faautec_launcher_CLI.py -a $ALIGN -c $CONST --consel $CONSL
+FAAUTeC -a $ALIGN -c $CONST --consel $CONSL
 ```
 
 #### On Windows
 The program do not work on Windows currently.
 
 ## TODO
-* Make the setup.py working
 * Check requirements
 * (Windows support)

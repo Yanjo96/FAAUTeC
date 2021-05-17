@@ -15,7 +15,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name='FAAUTec',
+    name='FAAUTeC',
     version='0.2',
     author='Yannick Hartmaring',
     #author_email='',
@@ -35,10 +35,10 @@ setup(
     license='BSD',
     entry_points={
         'console_scripts': [
-            'faautec = faautec.CLIOps:start_faautec'
+            'FAAUTeC = FAAUTeC.CLIOps:start_faautec'
         ],
     },
-    packages=['FAAUTeC'], # So that the subfolder 'TreeTopology' is read immediately.
+    packages=['FAAUTeC'], # So that the subfolder 'FAAUTeC' is read immediately.
     #packages = find_packages(),
     install_requires=['biopython','dendropy','ete3'],
     scripts=glob.glob('scripts/*'),
