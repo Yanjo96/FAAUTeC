@@ -2,6 +2,10 @@ library("stringr")
 library("reshape2")
 library("tidyverse")
 
+library("devtools")
+install_github("vqv/ggbiplot")
+require(ggbiplot)
+
 ########################################################################################################
 # Remove special characters (* and s) from the data frame
 ########################################################################################################
@@ -325,9 +329,13 @@ medianer <- function(data, gene, values, nRuns){
 ########################################################################################################
 # Plots an heatmap for all genes with most likely hypothesis
 ########################################################################################################
-whichHypo <- function(dataRAxML, dataIQTree, nRuns, hypos, path, w, h, color){
+whichHypo <- function(dataRAxML, dataIQTree, nRuns, hypos, path, w, h, color, threshold){
   nHypo <- length(hypos)
   genes <- rownames(dataRAxML[[1]])
+  
+  hypos <- c(hypos, "reject")
+  color <- c(color, "black")
+  
   whichHypo <- list()
   for (i in seq(1,length(genes)*6,6)){
     gene <- genes[ceiling(i/6)]
@@ -339,17 +347,22 @@ whichHypo <- function(dataRAxML, dataIQTree, nRuns, hypos, path, w, h, color){
     RAxML_IQT <- meaner(dataRAxML, gene, seq(2, nHypo*3, 3), nRuns)
     RAxML_IQT2 <- meaner(dataRAxML, gene, seq(3, nHypo*3, 3), nRuns)
 
-    whichHypo[[i+0]] <- data.frame(gene = gene, au = "IQTree CONS", hypo = hypos[which.max(IQTree_CONS)])
-    whichHypo[[i+1]] <- data.frame(gene = gene, au = "IQTree IQT1", hypo = hypos[which.max(IQTree_IQT)])
-    whichHypo[[i+2]] <- data.frame(gene = gene, au = "IQTree IQT2", hypo = hypos[which.max(IQTree_IQT2)])
+    if(any(c(IQTree_CONS, IQTree_IQT, IQTree_IQT2, RAxML_CONS, RAxML_IQT, RAxML_IQT2) >= threshold)) {
+    
+      whichHypo[[i+0]] <- data.frame(gene = gene, au = "IQTree CONS", hypo = hypos[which.max(c(IQTree_CONS, threshold-0.001))])
+      whichHypo[[i+1]] <- data.frame(gene = gene, au = "IQTree IQT1", hypo = hypos[which.max(c(IQTree_IQT, threshold-0.001))])
+      whichHypo[[i+2]] <- data.frame(gene = gene, au = "IQTree IQT2", hypo = hypos[which.max(c(IQTree_IQT2, threshold-0.001))])
 
-    whichHypo[[i+3]] <- data.frame(gene = gene, au = "RAxML CONS", hypo = hypos[which.max(RAxML_CONS)])
-    whichHypo[[i+4]] <- data.frame(gene = gene, au = "RAxML IQT1", hypo = hypos[which.max(RAxML_IQT)])
-    whichHypo[[i+5]] <- data.frame(gene = gene, au = "RAxML IQT2", hypo = hypos[which.max(RAxML_IQT2)])
+      whichHypo[[i+3]] <- data.frame(gene = gene, au = "RAxML CONS", hypo = hypos[which.max(c(RAxML_CONS, threshold-0.001))])
+      whichHypo[[i+4]] <- data.frame(gene = gene, au = "RAxML IQT1", hypo = hypos[which.max(c(RAxML_IQT, threshold-0.001))])
+      whichHypo[[i+5]] <- data.frame(gene = gene, au = "RAxML IQT2", hypo = hypos[which.max(c(RAxML_IQT2, threshold-0.001))])
+    }
   }
 
+  
   whichHypo <- do.call(rbind, whichHypo)
   whichHypo[which(whichHypo$gene=="concatenated_125spp"),1] <-"c125spp"
+  #print(whichHypo)
 
   t<- ggplot(whichHypo) + aes(au, gene, fill=hypo) + geom_tile() + theme_bw() + scale_fill_manual(values=color) +
     labs(x = "", y = "", fill="Hypo:") +
@@ -357,6 +370,110 @@ whichHypo <- function(dataRAxML, dataIQTree, nRuns, hypos, path, w, h, color){
 
   ggsave(filename = path, plot = t, width=w, height=h, units="cm")
 
+}
+
+
+########################################################################################################
+# Plots the biplots
+########################################################################################################
+biplotter <- function(dataRAxML, dataIQTree, nRuns, dataset, hypos, path, w = 17, h = 10, threshold = 0.05){
+  nHypo = length(hypos)
+  genes <- c()
+  rax <- list()
+  iqt <- list()
+  for(gene in 1:nrow(dataRAxML[[1]])){
+    rax_gene <- meaner(data = dataRAxML, gene = gene, values = 1:(nHypo*3), nRuns = nRuns)
+    iqt_gene <- meaner(data = dataIQTree, gene = gene, values = 1:(nHypo*3), nRuns = nRuns)
+    
+    if (any(c(rax_gene,iqt_gene) > threshold)){
+      rax[[gene]] <- rax_gene
+      iqt[[gene]] <- iqt_gene
+
+      genes <- c(genes, rownames(dataRAxML[[1]])[gene])
+    }
+  }
+  rax <- do.call(rbind, rax)
+  iqt <- do.call(rbind, iqt)
+  
+  for(i in seq(1,nHypo*3,3)){
+    hypo <- do.call(cbind, list(iqt[,i:(i+2)], rax[,i:(i+2)]))
+    colnames(hypo) <- c("IQT_CONS", "IQT_IQT1", "IQT_IQT2", "RAx_CONS", "RAx_IQT1", "RAx_IQT2")
+    
+    hypo_iqt <- iqt[,i:(i+2)]
+    hypo_rax <- rax[,i:(i+2)]
+    
+    colnames(hypo_iqt) <- c("CONSEL", "IQTree1", "IQTree2")
+    colnames(hypo_rax) <- c("CONSEL", "IQTree1", "IQTree2")
+    
+    rownames(hypo) <- genes
+    rownames(hypo)[which(rownames(hypo) == "concatenated_125spp")] <- "c125spp"
+    
+    rownames(hypo_iqt) <- genes
+    rownames(hypo_iqt)[which(rownames(hypo_iqt) == "concatenated_125spp")] <- "c125spp"
+    
+    rownames(hypo_rax) <- genes
+    rownames(hypo_rax)[which(rownames(hypo_rax) == "concatenated_125spp")] <- "c125spp"
+    
+    
+    pca <- prcomp(hypo)
+    pca_iqt <- prcomp(hypo_iqt)
+    pca_rax <- prcomp(hypo_rax)
+    
+    bi <-  ggbiplot(pcobj = pca,
+                    choices = c(1,2),
+                    obs.scale = 1, var.scale = 1,
+                    labels = rownames(hypo)
+                    )
+    
+    bi <- bi + labs(title = paste(dataset, "Hypothesis: ", hypos[ceiling(i/3)])) +
+      theme(legend.position = "top", text = element_text(size = textsize), legend.margin=margin(0,0,0,0),legend.box.margin=margin(-10,-10,-10,-10), plot.margin = unit(c(0.5, 0.2, 0.5, 0), "cm"), panel.spacing.x = unit(0.2, "lines")) +
+      theme_bw()
+    
+    bi_iqt <-  ggbiplot(pcobj = pca_iqt,
+                    choices = c(1,2),
+                    obs.scale = 1, var.scale = 1,
+                    labels = rownames(hypo_iqt))
+    
+    bi_iqt <- bi_iqt + labs(title = paste(dataset, "Hypothesis: IQTree, ", hypos[ceiling(i/3)])) +
+      theme(legend.position = "top", text = element_text(size = textsize), legend.margin=margin(0,0,0,0),legend.box.margin=margin(-10,-10,-10,-10), plot.margin = unit(c(0.5, 0.2, 0.5, 0), "cm"), panel.spacing.x = unit(0.2, "lines")) +
+      theme_bw()
+    
+    bi_rax <-  ggbiplot(pcobj = pca_rax,
+                    choices = c(1,2),
+                    obs.scale = 1, var.scale = 1,
+                    labels = rownames(hypo_rax)
+                    )
+    
+    bi_rax <- bi_rax + labs(title = paste(dataset, "Hypothesis: RAxML, ", hypos[ceiling(i/3)])) +
+      theme(legend.position = "top", text = element_text(size = textsize), legend.margin=margin(0,0,0,0),legend.box.margin=margin(-10,-10,-10,-10), plot.margin = unit(c(0.5, 0.2, 0.5, 0), "cm"), panel.spacing.x = unit(0.2, "lines")) +
+      theme_bw()
+    
+    
+    png(file = paste0(path, "/hypo_", hypos[ceiling(i/3)], ".png"), width=w, height=h, unit="cm", res=200)
+    print(bi)
+    dev.off()
+    
+    png(file = paste0(path, "/hypo_", hypos[ceiling(i/3)], "_ca", ".png"), width=w, height=h, unit="cm", res=200)
+    plot(ca(hypo), main = paste(dataset, hypos[ceiling(i/3)]))
+    dev.off()
+    
+    png(file = paste0(path, "/IQT_hypo_", hypos[ceiling(i/3)], ".png"), width=w, height=h, unit="cm", res=200)
+    print(bi_iqt)
+    dev.off()
+    
+    png(file = paste0(path, "/IQT_hypo_", hypos[ceiling(i/3)], "_ca", ".png"), width=w, height=h, unit="cm", res=200)
+    plot(ca(hypo_iqt), main = paste(dataset, hypos[ceiling(i/3)], "IQTree"))
+    dev.off()
+    
+    png(file = paste0(path, "/RAx_hypo_", hypos[ceiling(i/3)], ".png"), width=w, height=h, unit="cm", res=200)
+    print(bi_rax)
+    dev.off()
+    
+    png(file = paste0(path, "/RAx_hypo_", hypos[ceiling(i/3)], "_ca", ".png"), width=w, height=h, unit="cm", res=200)
+    plot(ca(hypo_rax), main = paste(dataset, hypos[ceiling(i/3)], "RAxML"))
+    dev.off()
+    
+  }
 }
 
 colortheme <- c("#a6cee3","#1f78b4","#b2df8a","#33a02c","#a6cee3","#1f78b4")
