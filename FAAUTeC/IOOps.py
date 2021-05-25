@@ -24,7 +24,6 @@ except ImportError:
 ###############
 
 __author__ = 'Yannick Hartmaring'
-__ctb__ = 'Nils Jenke'
 __copyright__ = ''
 __info__ = 'FAAUTeC'
 

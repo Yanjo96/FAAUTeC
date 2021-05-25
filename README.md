@@ -31,30 +31,33 @@ For a correct run I would recommend to specify the complete paths.
 - `--constraint| -c`  
  absolute path to constraint file; infile in NEWICK format; Example: /path_to_input/tree.tre
 
-- `--consel`  
-  path to consel executables
-
 #### Optional
 - `--model`  
   Model for RAxML
 
-- `--mlcalc`  
+- `--ml_inference`  
   Choose which program should run the ML-Tree calculation 'RAxML' or 'IQTree'
 
-- `--threadNumber | -T`  
-  Number of maximal used threads
-
-- `--iqtree2`  
-  absolute path to the iqtree2 executable
-
-- `--iqtreePath`  
+- `--path_iqtree`  
   absolute path to the iqtree executable
 
-- `--raxmlPath`  
+- `--path_raxml`  
   absolute path to the RAxML executable
 
-- `--latex`  
+- `--au_inference`  
+  Choose program for AU-test calculation 'CONSEL' or 'IQTree' or 'IQTree2', multiple selection possible by ';' as delimiter, e.g. 'CONSEL;IQTree'
+
+- `--path_consel`  
+  path to consel executables
+
+- `--path_iqtree2`  
+  absolute path to the iqtree2 executable
+
+- `--latex_format`  
   Creates a more beautiful Table with xelatex
+
+- `--thread_number`  
+  Number of maximal used threads
 
 - `--version`  
   print version number and exit
@@ -65,7 +68,7 @@ ALIGN=examples/input/FASTA/
 CONST=examples/input/Constraint/tree_hypothesis.txt
 CONSL=path/to/consel
 
-FAAUTeC -a $ALIGN -c $CONST --consel $CONSL
+FAAUTeC -a $ALIGN -c $CONST --ml_inference "RAxML" --au_inference "CONSEL" --path_consel $CONSL
 ```
 
 #### On Windows

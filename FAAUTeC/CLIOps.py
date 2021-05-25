@@ -20,7 +20,6 @@ import argparse
 ###############
 
 __author__ = 'Yannick Hartmaring'
-__ctb__ = "'Nils Jenke"
 __copyright__ = ''
 __info__ = 'FAAUTeC'
 __version__ = '0.2'
@@ -60,10 +59,6 @@ class CLI():
                             help='absolute path to constraint file; infile in NEWICK format; Example: /path_to_input/tree.tre',
                             required=True)
 
-        required.add_argument('--consel',
-                              help='path to consel executables',
-                              required=True)
-
         ### OPTIONAL ###
 
         optional.add_argument('--model',
@@ -71,36 +66,44 @@ class CLI():
                             default="GTRGAMMAI",
                             required=False)
 
-        optional.add_argument('--mlcalc',
+        optional.add_argument('--ml_inference',
                              help="Choose which program should run the ML-Tree calculation 'RAxML' or 'IQTree'",
                              default='RAxML',
                              required=False)
 
-        optional.add_argument('-T',
-                             '--threadNumber',
-                             help="Number of maximal used threads",
-                             default='1',
-                             required=False)
-
-        optional.add_argument('--iqtree2',
-                            help='absolute path to the iqtree2 executable',
-                            default=False,
-                            required=False)
-
-        optional.add_argument('--iqtreePath',
+        optional.add_argument('--path_iqtree',
                             help='absolute path to the iqtree executable',
                             default="iqtree",
                             required=False)
 
-        optional.add_argument('--raxmlPath',
+        optional.add_argument('--path_raxml',
                             help='absolute path to the iqtree executable',
                             default="raxmlHPC",
                             required=False)
 
-        optional.add_argument('--latex',
+        optional.add_argument('--au_inference',
+                             help="Choose program for AU-test calculation 'CONSEL' or 'IQTree' or 'IQTree2', multiple selection possible by ';' as delimiter, e.g. 'CONSEL;IQTree'",
+                             default='CONSEL',
+                             required=False)
+
+        optional.add_argument('--path_consel',
+                              help='path to consel executables',
+                              required=False)
+
+        optional.add_argument('--path_iqtree2',
+                            help='absolute path to the iqtree2 executable',
+                            default=False,
+                            required=False)
+
+        optional.add_argument('--latex_format',
                              help='',
                              default=False,
                              action='store_true',
+                             required=False)
+
+        optional.add_argument('--thread_number',
+                             help="Number of maximal used threads",
+                             default='1',
                              required=False)
 
         optional.add_argument('--version',
@@ -112,14 +115,15 @@ class CLI():
 
         FAAUTeCMain.faautec(args.alignment,
                                                 args.constraint,
-                                                args.consel,
+                                                args.path_consel,
                                                 args.model,
-                                                args.mlcalc,
-                                                args.threadNumber,
-                                                args.iqtree2,
-                                                args.iqtreePath,
-                                                args.raxmlPath,
-                                                args.latex)
+                                                args.ml_inference,
+                                                args.au_inference,
+                                                args.thread_number,
+                                                args.path_iqtree2,
+                                                args.path_iqtree,
+                                                args.path_raxml,
+                                                args.latex_format)
 
 ########
 # MAIN #

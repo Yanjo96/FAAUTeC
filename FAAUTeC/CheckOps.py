@@ -39,14 +39,47 @@ def checkAlignmentFile(alignment_path):
 
     SeqIO.write(nonEmptySeqs, alignment_path, "fasta")
 
-def checkPrerequisites():
-    # Check RAxML
+def checkPrerequisites(au_inference, path_iqtree2, path_consel, ml_inference):
+    # Output folder
+    if 'output' in os.listdir():
+        print("there is already an output folder, please rename or remove it before running FAAUTeC")
+        return(False)
 
-    # Check CONSEL
+    # Check AU Inference
+    programs = au_inference.split(";")
+    if(len(programs) == 0):
+        print("Please specify at least one program for AU Test calculation")
+        return(False)
 
-    # Check Biopython
+    if("IQTree2" in programs and not path_iqtree2):
+        print("Please specify the path of IQTree2 by the parameter --path_iqtree2")
+        return(False)
+    if("CONSEL" in programs and not path_consel):
+        print("Please specify the path of CONSEL by the parameter --path_consel")
+        return(False)
 
-    # Check dendropy
+    try:
+        programs.remove("CONSEL")
+    except:
+        pass
 
-    # Check mmv
-    return True
+    try:
+        programs.remove("IQTree")
+    except:
+        pass
+
+    try:
+        programs.remove("IQTree2")
+    except:
+        pass
+
+    if(len(programs) > 0):
+        print("'" + ' '.join(programs) + "' is not a supported Program for AU Test calculation, supported programs are: 'CONSEL', 'IQTree' and 'IQTree2'")
+        return(False)
+
+    # Check ML Inference
+    if(ml_inference != "RAxML" or ml_inference != "RAxML"):
+        print("'" + ml_inference + "' is not a supported program for ML inference, supported programs are: 'RAxML' and 'IQTree'")
+        return(False)
+
+    return(True)

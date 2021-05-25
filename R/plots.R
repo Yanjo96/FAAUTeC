@@ -1,6 +1,7 @@
 library("stringr")
 library("reshape2")
 library("tidyverse")
+library("ca")
 
 library("devtools")
 install_github("vqv/ggbiplot")
@@ -376,21 +377,14 @@ whichHypo <- function(dataRAxML, dataIQTree, nRuns, hypos, path, w, h, color, th
 ########################################################################################################
 # Plots the biplots
 ########################################################################################################
-biplotter <- function(dataRAxML, dataIQTree, nRuns, dataset, hypos, path, w = 17, h = 10, threshold = 0.05){
+biplotter <- function(dataRAxML, dataIQTree, nRuns, dataset, hypos, path, w = 17, h = 10){
   nHypo = length(hypos)
-  genes <- c()
   rax <- list()
   iqt <- list()
   for(gene in 1:nrow(dataRAxML[[1]])){
-    rax_gene <- meaner(data = dataRAxML, gene = gene, values = 1:(nHypo*3), nRuns = nRuns)
-    iqt_gene <- meaner(data = dataIQTree, gene = gene, values = 1:(nHypo*3), nRuns = nRuns)
+    rax[[gene]] <- meaner(data = dataRAxML, gene = gene, values = 1:(nHypo*3), nRuns = nRuns)
+    iqt[[gene]] <- meaner(data = dataIQTree, gene = gene, values = 1:(nHypo*3), nRuns = nRuns)
     
-    if (any(c(rax_gene,iqt_gene) > threshold)){
-      rax[[gene]] <- rax_gene
-      iqt[[gene]] <- iqt_gene
-
-      genes <- c(genes, rownames(dataRAxML[[1]])[gene])
-    }
   }
   rax <- do.call(rbind, rax)
   iqt <- do.call(rbind, iqt)
@@ -405,13 +399,13 @@ biplotter <- function(dataRAxML, dataIQTree, nRuns, dataset, hypos, path, w = 17
     colnames(hypo_iqt) <- c("CONSEL", "IQTree1", "IQTree2")
     colnames(hypo_rax) <- c("CONSEL", "IQTree1", "IQTree2")
     
-    rownames(hypo) <- genes
+    rownames(hypo) <- rownames(dataRAxML[[1]])
     rownames(hypo)[which(rownames(hypo) == "concatenated_125spp")] <- "c125spp"
     
-    rownames(hypo_iqt) <- genes
+    rownames(hypo_iqt) <- rownames(dataRAxML[[1]])
     rownames(hypo_iqt)[which(rownames(hypo_iqt) == "concatenated_125spp")] <- "c125spp"
     
-    rownames(hypo_rax) <- genes
+    rownames(hypo_rax) <- rownames(dataRAxML[[1]])
     rownames(hypo_rax)[which(rownames(hypo_rax) == "concatenated_125spp")] <- "c125spp"
     
     
