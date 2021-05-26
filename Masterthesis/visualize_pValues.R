@@ -1,4 +1,4 @@
-source("../FAAUTeC/R/plots.R")
+source("../R/plots.R")
 
 ########################################################################################################
 # GONCALVES et al 2020 same tree
@@ -20,16 +20,16 @@ dataIQTree <- list(Goncalves2020_1_IQTree, Goncalves2020_2_IQTree, Goncalves2020
 dataRAxML <- list(Goncalves2020_1_RAxML, Goncalves2020_2_RAxML, Goncalves2020_3_RAxML, Goncalves2020_4_RAxML, Goncalves2020_5_RAxML)
 
 # biggest standarddeviation: rps4, petN with different AU Test results, rpl36 with different RAxML und ML-IQTree results: petL
-plotter(genes = c("rps4","rpl36","petN", "petL"), 
-        dataIQTree = dataIQTree, 
-        dataRAxML = dataRAxML, 
-        nHypo = 4, 
+plotter(genes = c("rps4","rpl36","petN", "petL"),
+        dataIQTree = dataIQTree,
+        dataRAxML = dataRAxML,
+        nHypo = 4,
         path = "GoncalvesEtAl2020/plots/combined/",
-        nPlots = 2, 
+        nPlots = 2,
         nCols = 2,
-        hypoName = c("Hypo 1","Hypo 2","Hypo 3","Hypo 4"), 
-        w = 17, 
-        h = 19, 
+        hypoName = c("Hypo 1","Hypo 2","Hypo 3","Hypo 4"),
+        w = 17,
+        h = 19,
         textsize=11)
 
 # Plot all gene boxplots in his own figures
@@ -56,7 +56,7 @@ derAllesInEinemPlotter(dataIQTree = dataIQTree,
                        textsize = 10)
 
 # Plot standarddeviation
-sdPlotter(dataRAxML, dataIQTree, c("Hypo 1", "Hypo 2", "Hypo 3", "Hypo 4"), 5, "GoncalvesEtAl2020/plots/sd/", "Goncavles2020")
+sdPlotter(dataRAxML, dataIQTree, c("Hypo 1", "Hypo 2", "Hypo 3", "Hypo 4"), 5, "GoncalvesEtAl2020/plots/sd/", "Goncavles2020", medianPos = 0.03, roundMedian=5)
 
 # Plot which Hypo is the most likely one
 whichHypo(dataRAxML = dataRAxML, dataIQTree = dataIQTree, nRuns = 5, hypos = c("Hypo 1","Hypo 2","Hypo 3","Hypo 4"), path = "GoncalvesEtAl2020/plots/whichHypos/diffHypos.pdf", w = 17, h=13, color = c("#a6cee3","#1f78b4","#b2df8a","#33a02c"), threshold = 0.05)
@@ -70,9 +70,10 @@ biplotter(dataRAxML = dataRAxML, dataIQTree = dataIQTree, nRuns = 5, dataset = "
 
 dataRAxML <- list(kuemmerDich(readRun("GoncalvesEtAl2020/single_AU/output_IQTree2_RAxML/SUMMARY/au_runtime_table.csv")))
 dataIQTree <- list(kuemmerDich(readRun("GoncalvesEtAl2020/single_AU/output_IQTree2_IQTree/SUMMARY/au_runtime_table.csv")))
-sdPlotter(dataRAxML, dataIQTree, c("Hypo 1", "Hypo 2", "Hypo 3", "Hypo 4"), 1, "GoncalvesEtAl2020/plots/sd/", "Goncavles2020")
+sdPlotter(dataRAxML = dataRAxML, dataIQTree = dataIQTree, hypo = c("Hypo 1", "Hypo 2", "Hypo 3", "Hypo 4"), nRuns = 1, path = "GoncalvesEtAl2020/plots/sd/", dataset = "Goncavles2020", medianPos = 0.06, roundMedian=5)
+percentageOfSigRejections(dataRAxML = dataRAxML, dataIQTree = dataIQTree, hypos = c("Hypo 1", "Hypo 2", "Hypo 3", "Hypo 4"), path = "GoncalvesEtAl2020/plots/numberOfSigReject/", dataset = "GoncalvesEtAl2020", w = 12, h = 8, threshold = 0.05)
 
-########################################################################################################
+
 # GONCALVES et al 2019 same Tree
 ########################################################################################################
 
@@ -129,14 +130,14 @@ Goncalves2019_5_IQTree <- cbind(Goncalves2019_5_cd[1:3], Goncalves2019_5_ex[1:3]
 dataRAxML <- list(Goncalves2019_1_RAxML, Goncalves2019_2_RAxML, Goncalves2019_3_RAxML, Goncalves2019_4_RAxML, Goncalves2019_5_RAxML)
 dataIQTree <- list(Goncalves2019_1_IQTree, Goncalves2019_2_IQTree, Goncalves2019_3_IQTree, Goncalves2019_4_IQTree, Goncalves2019_5_IQTree)
 
-sdPlotter(dataRAxML = dataRAxML, dataIQTree = dataIQTree, hypo = c("codon-aligned", "exon", "gene"), nRuns = 5, path = "GoncalvesEtAl2019/plots/sd/", dataset = "Goncavles2019")
+sdPlotter(dataRAxML = dataRAxML, dataIQTree = dataIQTree, hypo = c("codon-aligned", "exon", "gene"), nRuns = 5, path = "GoncalvesEtAl2019/plots/sd/", dataset = "Goncavles2019", medianPos = 0.0017, roundMedian=5)
 whichHypo(dataRAxML = dataRAxML, dataIQTree = dataIQTree, nRuns = 5, hypos = c("codon-aligned", "exon", "gene"), path = "GoncalvesEtAl2019/plots/whichHypo/diffHypos.pdf", w = 17, h = 12, color = c("#a6cee3","#1f78b4","#b2df8a"), threshold = 0.05)
 biplotter(dataRAxML = dataRAxML, dataIQTree = dataIQTree, nRuns = 5, dataset = "Goncalves et al. 2019", hypos = c("codon-alinged","exon","gene"), path = "GoncalvesEtAl2019/plots/biplot", w = 17, h = 10)
 
 # biggest standard deviation: psbB, rps3, atpB with different AU Test results: rbcL with different RAxML und IQTree Results
 plotter(genes = c("psbB","atpB","rps3", "rbcL"),
         dataIQTree = dataIQTree,
-        dataRAxML = dataRAxML, 
+        dataRAxML = dataRAxML,
         nHypo = 3,
         path = "GoncalvesEtAl2019/plots/combined/",
         nPlots = 2,
@@ -178,4 +179,6 @@ Goncalves2019_ge <- kuemmerDich(readRun("GoncalvesEtAl2019/single_AU/output_ge_I
 dataIQTree <- list(cbind(Goncalves2019_cd[1:3], Goncalves2019_ex[1:3], Goncalves2019_ge[1:3]))
 dataRAxML <- list(cbind(Goncalves2019_cd[4:6], Goncalves2019_ex[4:6], Goncalves2019_ge[4:6]))
 
-sdPlotter(dataRAxML, dataIQTree, c("codon-aligned", "exon", "gene"), 1, "GoncalvesEtAl2019/plots/sd/", "Goncavles2019")
+sdPlotter(dataRAxML = dataRAxML, dataIQTree = dataIQTree, hypo = c("codon-aligned", "exon", "gene"), nRuns = 1, path = "GoncalvesEtAl2019/plots/sd/", dataset = "Goncavles2019", medianPos = 0.004, roundMedian = 5)
+percentageOfSigRejections(dataRAxML = dataRAxML, dataIQTree = dataIQTree, hypos = c("codon-aligned", "exon", "gene"), path = "GoncalvesEtAl2019/plots/numberOfSigReject/", dataset = "GoncalvesEtAl2019", w = 12, h = 8, threshold = 0.05)
+

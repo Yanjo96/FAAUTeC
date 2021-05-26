@@ -114,16 +114,16 @@ class CLI():
         args = parser.parse_args()
 
         FAAUTeCMain.faautec(args.alignment,
-                                                args.constraint,
-                                                args.path_consel,
-                                                args.model,
-                                                args.ml_inference,
-                                                args.au_inference,
-                                                args.thread_number,
-                                                args.path_iqtree2,
-                                                args.path_iqtree,
-                                                args.path_raxml,
-                                                args.latex_format)
+                            args.constraint,
+                            args.path_consel,
+                            args.model,
+                            args.ml_inference,
+                            args.au_inference,
+                            args.thread_number,
+                            args.path_iqtree2,
+                            args.path_iqtree,
+                            args.path_raxml,
+                            args.latex_format)
 
 ########
 # MAIN #

@@ -72,7 +72,7 @@ FAAUTeC -a $ALIGN -c $CONST --ml_inference "RAxML" --au_inference "CONSEL" --pat
 ```
 
 #### On Windows
-The program do not work on Windows currently.
+The program does not work on Windows currently.
 
 ## TODO
 * Check requirements

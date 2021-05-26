@@ -7,3 +7,4 @@ examples/input/*.nex.phy
 ./RAxML*
 
 *.pyc
+.Rhistory

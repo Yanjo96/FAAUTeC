@@ -58,7 +58,7 @@ hypoN <- function(theData, nRuns, nAU, hypo){
 }
 
 ########################################################################################################
-# Plottet any number of genes in a direct AU Test comparison plot
+# Plots any number of genes in a direct AU Test comparison plot
 ########################################################################################################
 plotter <- function(genes, dataIQTree, dataRAxML, nHypo, path, nPlots, nCols, hypoName, w, h, showTitle = FALSE, showLegend = FALSE, textsize=12){
   nRuns <- length(dataIQTree)
@@ -259,7 +259,7 @@ getSD <- function(data, gene, dings, nRuns){
 ########################################################################################################
 # plotted the standard deviation
 ########################################################################################################
-sdPlotter <- function(dataRAxML, dataIQTree, hypo, nRuns, path, dataset){
+sdPlotter <- function(dataRAxML, dataIQTree, hypo, nRuns, path, dataset, medianPos, roundMedian){
   r <- list()
   data <- list(dataRAxML, dataIQTree)
   mlcalc <- c("RAxML","IQTree")
@@ -277,9 +277,25 @@ sdPlotter <- function(dataRAxML, dataIQTree, hypo, nRuns, path, dataset){
     }
   }
   r <- do.call(rbind,r)
+
+  medians <- list()
+  k <- 1
+  for (i in mlcalc){
+    for (j in hypo){
+      x <- r[which(r$mlcalc == i & r$hypo == j),]
+      medians[[k]] <- data.frame(hypo = j, mlcalc = i, median = paste0("m:",round(median(x$value),roundMedian),"\na:",round(mean(x$value),roundMedian)))
+      k <- k + 1
+      #print(paste(unlist(subset(x[order(x$value, decreasing = TRUE)[1:10],], select=gene))))
+      #print(paste(unlist(subset(x[order(x$value, decreasing = TRUE)[1:10],], select=value))))
+    }
+  }
+  medians <- do.call(rbind, medians)
+
   t <- ggplot(r) + aes(x=hypo,y=value, color=hypo) + geom_boxplot() +
     facet_wrap(~mlcalc, dir = "h", ncol=2) + theme_bw() + scale_color_manual(values=colortheme) +
     labs(x = "", y = "sd of the p-values", fill="AU Test:") +
+    #stat_summary(fun=mean, geom="point", shape=4, size=7, color="black", fill="black") + 
+    geom_text(data = medians, aes(hypo, max(r$value)-medianPos, label = median), position = position_dodge(width = 0.8), size = 3, vjust = -0.5, color="gray") + 
     theme(legend.position = "none", text = element_text(size = textsize), legend.margin=margin(0,0,0,0),legend.box.margin=margin(-10,-10,-10,-10), plot.margin = unit(c(0.5, 0.05, 0.5, 0), "cm"), panel.spacing.x = unit(0.2, "lines"))
 
   if(nRuns == 1){
@@ -287,19 +303,8 @@ sdPlotter <- function(dataRAxML, dataIQTree, hypo, nRuns, path, dataset){
   }else{
     t <- t + ggtitle(paste("p-value standard deviation of", dataset, "over", nRuns,"runs"))
   }
-
-  ggsave(filename = paste0(path,"variance_",dataset,"_",nRuns,"Runs.pdf"), plot = t, width=15, height=8, units="cm")
-
-  for (i in mlcalc){
-    for (j in hypo){
-      x <- r[which(r$mlcalc == i & r$hypo == j),]
-      print(paste(i,j))
-      print(paste("Median:", median(x$value), "Mean:", mean(x$value)))
-      print(paste(unlist(subset(x[order(x$value, decreasing = TRUE)[1:10],], select=gene))))
-      print(paste(unlist(subset(x[order(x$value, decreasing = TRUE)[1:10],], select=value))))
-      print("")
-    }
-  }
+  
+  ggsave(filename = paste0(path,"sd_",dataset,"_",nRuns,"Runs.pdf"), plot = t, width=15, height=8, units="cm")
 
 }
 
@@ -468,6 +473,30 @@ biplotter <- function(dataRAxML, dataIQTree, nRuns, dataset, hypos, path, w = 17
     dev.off()
     
   }
+}
+
+########################################################################################################
+# Plots the percentage of rejected gene trees for each hypothesis 
+########################################################################################################
+percentageOfSigRejections <- function(dataRAxML, dataIQTree, hypos, path, dataset, w, h, threshold = 0.05){
+  nHypos <- length(hypos)
+  iqt <- c()
+  rax <- c()
+  for (i in 1:(nHypos*3)){
+    iqt <- c(iqt, (sum(dataIQTree[[1]][,i] < threshold & dataIQTree[[1]][,i] > 0) / sum(dataIQTree[[1]][,i] > 0)))
+    rax <- c(rax, (sum(dataRAxML[[1]][,i] < threshold & dataRAxML[[1]][,i] > 0) / sum(dataRAxML[[1]][,i] > 0)))
+  }
+  df <- data.frame(IQTree = iqt,
+                   RAxML = rax,
+                   au = rep(c("CONS","IQ1","IQ2"), nHypos),
+                   ml = rep(hypos, each = 3))
+  df <- melt(df)
+
+  t <- ggplot(df, aes(x=au, y=value, fill=au)) + geom_bar(stat = "identity") + facet_wrap(~variable + ml, dir = "h", ncol=nHypos) + theme_bw() +
+          labs(y = "Percentage of significant rejections", x = "Used Program to calculate the AU Test") +
+          theme(legend.position = "none", text = element_text(size = 11), panel.spacing.x = unit(0.2, "lines")) + scale_fill_manual(values=colortheme)
+
+  ggsave(filename = paste0(path, dataset, "_NumberSignRejections.pdf"), plot = t, width=w, height=h, units="cm")
 }
 
 colortheme <- c("#a6cee3","#1f78b4","#b2df8a","#33a02c","#a6cee3","#1f78b4")
