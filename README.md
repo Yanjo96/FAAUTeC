@@ -1,4 +1,4 @@
-# FAAUTeC Fully Automated Approximately Unbiased Test Comparer
+# FAAUTeC: Fully Automated Approximately Unbiased Test Comparer
 * Version: 0.2
 
 ## INSTALLATION

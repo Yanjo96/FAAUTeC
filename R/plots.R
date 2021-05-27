@@ -269,16 +269,18 @@ sdPlotter <- function(dataRAxML, dataIQTree, hypo, nRuns, path, dataset, medianP
     genename <- rownames(dataRAxML[[1]][j,])
     for (k in 1:2){
       for (l in 1:nHypo) {
-        r[[i+((l-1)+((k-1)*nHypo))]] <- data.frame(value = getSD(data = data[[k]], gene = j, dings = seq((l*3)-2, l*3), nRuns),
-                                                   gene = genename,
+        r[[i+((l-1)+((k-1)*nHypo))]] <- data.frame(gene = genename,
                                                    mlcalc = mlcalc[k],
-                                                   hypo = hypo[l])
+                                                   hypo = hypo[l],
+                                                   value = getSD(data = data[[k]], gene = j, dings = seq((l*3)-2, l*3), nRuns)
+                                                   )
       }
     }
   }
   r <- do.call(rbind,r)
 
   medians <- list()
+  write.csv((r[order(r$value, decreasing = TRUE),]), file = paste0(path, "sd_",dataset,"_",nRuns,"Runs.csv"))
   k <- 1
   for (i in mlcalc){
     for (j in hypo){
