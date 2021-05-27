@@ -78,7 +78,7 @@ def checkPrerequisites(au_inference, path_iqtree2, path_consel, ml_inference):
         return(False)
 
     # Check ML Inference
-    if(ml_inference != "RAxML" or ml_inference != "RAxML"):
+    if(ml_inference != "RAxML" or ml_inference != "IQTree"):
         print("'" + ml_inference + "' is not a supported program for ML inference, supported programs are: 'RAxML' and 'IQTree'")
         return(False)
 
