@@ -6,10 +6,14 @@
 python3 setup.py install  # Installation
 python3 setup.py test     # Testing
 ```
+or
+```
+pip install git+https://github.com/Yanjo96/FAAUTeC.git
+```
 
 ## Requirements
 * RAxML (https://github.com/stamatak/standard-RAxML)
-* CONSEL (https://github.com/shimo-lab/consel)
+* CONSEL (http://stat.sys.i.kyoto-u.ac.jp/prog/consel/)
 * IQTree (http://www.iqtree.org/)
 * Python3
 * Biopython

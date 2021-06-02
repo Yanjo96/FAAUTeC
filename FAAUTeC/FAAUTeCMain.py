@@ -20,7 +20,7 @@ import CheckOps as COps
 # AUTHOR INFO #
 ###############
 
-__author__ = 'Yannick Hartmaring'
+__author__ = 'Y. Hartmaring'
 __copyright__ = ''
 __info__ = 'FAAUTeC'
 __version__ = '0.2'

@@ -19,7 +19,7 @@ import argparse
 # AUTHOR INFO #
 ###############
 
-__author__ = 'Yannick Hartmaring'
+__author__ = 'Y. Hartmaring'
 __copyright__ = ''
 __info__ = 'FAAUTeC'
 __version__ = '0.2'
@@ -77,7 +77,7 @@ class CLI():
                             required=False)
 
         optional.add_argument('--path_raxml',
-                            help='absolute path to the iqtree executable',
+                            help='absolute path to the raxml executable',
                             default="raxmlHPC",
                             required=False)
 

@@ -23,7 +23,7 @@ except ImportError:
 # AUTHOR INFO #
 ###############
 
-__author__ = 'Yannick Hartmaring'
+__author__ = 'Y. Hartmaring'
 __copyright__ = ''
 __info__ = 'FAAUTeC'
 
