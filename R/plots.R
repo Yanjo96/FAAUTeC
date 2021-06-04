@@ -488,14 +488,14 @@ percentageOfSigRejections <- function(dataRAxML, dataIQTree, hypos, path, datase
     iqt <- c(iqt, (sum(dataIQTree[[1]][,i] < threshold & dataIQTree[[1]][,i] > 0) / sum(dataIQTree[[1]][,i] > 0)))
     rax <- c(rax, (sum(dataRAxML[[1]][,i] < threshold & dataRAxML[[1]][,i] > 0) / sum(dataRAxML[[1]][,i] > 0)))
   }
-  df <- data.frame(IQTree = iqt,
-                   RAxML = rax,
+  df <- data.frame(IQTree = round(iqt * 100),
+                   RAxML = round(rax * 100),
                    au = rep(c("CONS","IQ1","IQ2"), nHypos),
                    ml = rep(hypos, each = 3))
   df <- melt(df)
 
   t <- ggplot(df, aes(x=au, y=value, fill=au)) + geom_bar(stat = "identity") + facet_wrap(~variable + ml, dir = "h", ncol=nHypos) + theme_bw() +
-          labs(y = "Percentage of significant rejections", x = "Used Program to calculate the AU Test") +
+          labs(y = "Percentage of significant rejections", x = "AU Test Implementation") +
           theme(legend.position = "none", text = element_text(size = 11), panel.spacing.x = unit(0.2, "lines")) + scale_fill_manual(values=colortheme)
 
   ggsave(filename = paste0(path, dataset, "_NumberSignRejections.pdf"), plot = t, width=w, height=h, units="cm")
