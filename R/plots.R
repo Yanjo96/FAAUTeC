@@ -36,7 +36,7 @@ kuemmerDich <- function(df, marker = "_test"){
   rownames(df) <- str_replace_all(rownames(df),marker,"")
   rownames(df) <- str_replace_all(rownames(df),"_auto","")
   df$genes <- rownames(df)
-  df <- subset(df[order(df$genes),], select = -genes)
+  df <- subset(df[order(df$genes, decreasing = FALSE),], select = -genes)
 
   return(df)
 }
@@ -341,7 +341,7 @@ whichHypo <- function(dataRAxML, dataIQTree, nRuns, hypos, path, w, h, color, th
   nHypo <- length(hypos)
   genes <- rownames(dataRAxML[[1]])
   
-  hypos <- c(hypos, "reject")
+  hypos <- c(hypos, paste("all",nHypo,"reject"))
   color <- c(color, "black")
   
   whichHypo <- list()
@@ -370,9 +370,12 @@ whichHypo <- function(dataRAxML, dataIQTree, nRuns, hypos, path, w, h, color, th
   
   whichHypo <- do.call(rbind, whichHypo)
   whichHypo[which(whichHypo$gene=="concatenated_125spp"),1] <-"c125spp"
-  #print(whichHypo)
+  genes[which(genes=="concatenated_125spp")] <-"1c125spp"
+  genes <- sort(genes, decreasing = TRUE)
+  genes[which(genes=="1c125spp")] <-"c125spp"
 
-  t<- ggplot(whichHypo) + aes(au, gene, fill=hypo) + geom_tile() + theme_bw() + scale_fill_manual(values=color) +
+  t<- ggplot(whichHypo) + aes(au, ordered(gene, levels=genes), fill=ordered(hypo, levels=hypos)) + 
+    geom_tile() + theme_bw() + scale_fill_manual(values=color) +
     labs(x = "", y = "", fill="Hypo:") +
     theme(legend.position = "top", text = element_text(size = textsize), legend.margin=margin(0,0,0,0),legend.box.margin=margin(-10,-10,-10,-10), plot.margin = unit(c(0.5, 0.2, 0.5, 0), "cm"), panel.spacing.x = unit(0.2, "lines"))
 
