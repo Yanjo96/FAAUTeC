@@ -8,6 +8,7 @@ Custom operations input and output processes
 #####################
 
 import os
+import subprocess
 from Bio import SeqIO
 from Bio.Nexus import Nexus
 
@@ -38,6 +39,22 @@ def checkAlignmentFile(alignment_path):
             nonEmptySeqs.append(seq_record)
 
     SeqIO.write(nonEmptySeqs, alignment_path, "fasta")
+
+def checkRAxMLVersion(raxml_path):
+    raxmlVersion = subprocess.check_output(raxml_path + ' -v', shell=True).decode('utf-8').strip().split("\n")
+    for line in raxmlVersion:
+        if "RAxML-NG" in line:
+            return(line, "ng")
+        elif "RAxML version" in line:
+            return(line, "standard")
+    return False, False
+
+def checkIQTreeVersion(iqtree_path):
+    iqtreeVersion = subprocess.check_output(iqtree_path + ' -v', shell=True).decode('utf-8').strip().split("\n")
+    for line in iqtreeVersion:
+        if "version" in line:
+            return(line)
+    return False
 
 def checkPrerequisites(au_inference, path_iqtree2, path_consel, ml_inference):
     # Output folder

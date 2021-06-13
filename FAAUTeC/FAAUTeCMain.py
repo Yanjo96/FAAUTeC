@@ -54,13 +54,50 @@ def faautec(alignment,
     if(not COps.checkPrerequisites(au_inference, iqtree2_path, consel_path, mlcalc)):
         sys.exit()
 
-    os.system("mkdir output/")
-    os.system("mkdir output/SUMMARY")
+    overallLog = ["alignment: " + str(alignment),
+                  "constraint_path: " + str(constraint_path),
+                  "consel_path: " + str(consel_path),
+                  "model: " + str(model),
+                  "ml_inference: " + str(mlcalc),
+                  "au_inference: " + str(au_inference),
+                  "threadNumber: " + str(threadNumber),
+                  "iqtree2_path: " + str(iqtree2_path),
+                  "iqtree_path: " + str(iqtree_path),
+                  "raxml_path: " + str(raxml_path),
+                  "latex: " + str(latex)]
 
+    FOps.commandline("mkdir output/")
+    FOps.commandline("mkdir output/SUMMARY")
 
     constraints = FOps.readConstraints(constraint_path)
     place = ["hypo" + str(i) for i in range(len(constraints))]
     programs = au_inference.split(";")
+    raxmlVersion = "standard"
+
+    if(mlcalc == "RAxML" or "CONSEL" in programs):
+        raxmlVersionNumber, raxmlVersion = COps.checkRAxMLVersion(raxml_path)
+        if(not raxmlVersionNumber):
+            print("The RAxML version: '" + raxml_path + "' is not supported")
+            sys.exit()
+        overallLog.append("RAxML Version: " + raxmlVersionNumber)
+
+    if(mlcalc == "IQTree" or "IQTree" in programs):
+        iqtreeVersionNumber = COps.checkIQTreeVersion(iqtree_path)
+        if(not iqtreeVersionNumber):
+            print("The IQTree version: '" + iqtree_path + "' is not supported")
+            sys.exit()
+        overallLog.append("IQTree Version: " + iqtreeVersionNumber)
+
+    if("IQTree2" in programs):
+        iqtreeVersionNumber = COps.checkIQTreeVersion(iqtree2_path)
+        if(not iqtreeVersionNumber):
+            print("The IQTree version: '" + iqtree2_path + "' is not supported")
+            sys.exit()
+        overallLog.append("IQTree2 Version: " + iqtreeVersionNumber)
+
+    with open("output/SUMMARY/log.txt","w") as logFile:
+        for line in overallLog:
+            logFile.write(line + "\n")
 
     treeFile = open("output/SUMMARY/raxml_hypoTreeShortestDistUnconstTree.tre","w")
     auFile = open("output/SUMMARY/au_runtime_table.csv","w")
@@ -70,20 +107,22 @@ def faautec(alignment,
     au_values = {}
     runtimes = {}
 
-    alis = os.listdir(alignment)
+    alis = [i for i in os.listdir(alignment) if i.split(".")[-1]=="fasta" or i.split(".")[-1]=="fa" or i.split(".")[-1]=="phy" or i.split(".")[-1]=="nex"]
+
     colored = 0
     for ali in alis:
         print(ali)
         gene = ali.split(".")[0]
         ali = alignment + ali.strip()
-        if ali.split(".")[-1] != "fasta":
-            if ali.split(".")[-1] == "phy":
-                ali = IOOps.Inp().phylip2fasta(ali)
-            elif ali.split(".")[-1] == "nex":
-                ali = IOOps.Inp().nexus2fasta(ali)
-            else:
-                print(ali + " was skipped because the file ending is not sopprted. Supported File endings: 'fasta', 'nex', 'phy'")
-                continue
+        if ali.split(".")[-1] == "fasta" or ali.split(".")[-1] == "fa":
+            pass
+        elif ali.split(".")[-1] == "phy":
+            ali = IOOps.Inp().phylip2fasta(ali)
+        elif ali.split(".")[-1] == "nex":
+            ali = IOOps.Inp().nexus2fasta(ali)
+        else:
+            print(ali + " was skipped because the file ending is not sopprted. Supported File endings: 'fasta', 'nex', 'phy'")
+            continue
 
         COps.checkAlignmentFile(ali)
 
@@ -111,7 +150,7 @@ def faautec(alignment,
                         "# Calculate ML-Trees with RAxML"]
 
             ### Calculate the ML-Trees with RAxML
-            log = log + FOps.raxml(ali, constraints, model, gene, threadNumber, raxml_path)
+            log = log + FOps.raxml(ali, constraints, model, gene, threadNumber, raxml_path, raxmlVersion)
 
             ### Find Tree which has the smallest euclidic distance to
             ### to the unconstraint tree
@@ -157,7 +196,7 @@ def faautec(alignment,
                         "# Calculate AU-Test with CONSEL"]
 
             start = time.time()
-            log = log + FOps.consel(ali, consel_path, model, gene, mlcalc, threadNumber, raxml_path)
+            log = log + FOps.consel(ali, consel_path, model, gene, mlcalc, threadNumber, raxml_path, raxmlVersion)
             runtimes.update({"CONSEL":round(time.time() - start,3)})
 
             ## Save the AU Test values to a variable
@@ -187,7 +226,7 @@ def faautec(alignment,
             log = log + ["\n",
                         "# Calculate AU-Test with IQTree"]
             start = time.time()
-            log = log + FOps.iqtree_autest(ali, gene, mlcalc, threadNumber, iqtree_path)
+            log = log + FOps.iqtree_autest(ali, iqtree_path, gene, mlcalc, threadNumber, raxmlVersion)
             runtimes.update({"IQTree":round(time.time() - start,3)})
 
             au_iqtree = []
@@ -223,7 +262,7 @@ def faautec(alignment,
             log = log + ["\n",
                          "# Calculate AU-Test with IQTree"]
             start = time.time()
-            log = log + FOps.iqtree2_autest(ali, iqtree2_path, gene, mlcalc, threadNumber)
+            log = log + FOps.iqtree_autest(ali, iqtree2_path, gene, mlcalc, threadNumber, raxmlVersion)
             runtimes.update({"IQTree2":round(time.time() - start,3)})
 
             au_iqtree2 = []
@@ -263,6 +302,7 @@ def faautec(alignment,
 
         os.remove(gene + "_COMBINED.tre")
         os.remove("hypo.txt")
+        os.remove("hypo_rem.txt")
         print(str(colored) + " / " + str(int(len(alis))))
 
 

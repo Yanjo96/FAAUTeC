@@ -1,4 +1,5 @@
 import os
+import subprocess
 import dendropy
 from Bio import SeqIO
 from Bio.Nexus import Nexus
@@ -98,21 +99,18 @@ def removeGenesFromConstTree(alignment_path, constraint_path, output_path):
             new_constraint_path.write(removeTaxa(constraint_path, stayTaxa, tree) + "\n")
     new_constraint_path.close()
 
-
-def iqtree_autest(alignment, gene_name, mlcalc, threadNumber, iqtree_path):
+def iqtree_autest(alignment, iqtree2_path, gene_name, mlcalc, threadNumber, raxml_version):
     log = []
-    if(mlcalc == "RAxML"):
-        log.append(commandline(iqtree_path + " -s " + alignment +" -m GTR+I+G -z " + gene_name + "_COMBINED.tre -te output/" + gene_name + "/02_output_RAxML/RAxML_bestTree.withoutConstraints_" + gene_name + " -zb 10000 -au -pre " + gene_name + "_IQTree -quiet -nt " + threadNumber))
+    if(mlcalc == "RAxML" and raxml_version == "standard"):
+        unconstTree = "output/" + gene_name + "/02_output_RAxML/RAxML_bestTree.withoutConstraints_" + gene_name
+    elif(mlcalc == "RAxML" and raxml_version == "ng"):
+        unconstTree = "output/" + gene_name + "/02_output_RAxML/RAxML_withoutConstraints_" + gene_name + ".raxml.bestTree"
+    elif(mlcalc == "IQTree"):
+        unconstTree = "output/" + gene_name + "/02_output_IQTree/" + gene_name + "_IQTree_unconst.treefile"
     else:
-        log.append(commandline(iqtree_path + " -s " + alignment +" -m GTR+I+G -z " + gene_name + "_COMBINED.tre -te output/" + gene_name + "/02_output_IQTree/" + gene_name + "_IQTree_unconst.treefile -zb 10000 -au -pre " + gene_name + "_IQTree -quiet -nt " + threadNumber))
-    return log
+        return False # should never happen
 
-def iqtree2_autest(alignment, iqtree2_path, gene_name, mlcalc, threadNumber):
-    log = []
-    if(mlcalc == "RAxML"):
-        log.append(commandline(iqtree2_path + " -s " + alignment +" -m GTR+I+G -z " + gene_name + "_COMBINED.tre -te output/" + gene_name + "/02_output_RAxML/RAxML_bestTree.withoutConstraints_" + gene_name + " -zb 10000 -au -pre " + gene_name + "_IQTree -quiet -nt " + threadNumber))
-    else:
-        log.append(commandline(iqtree2_path + " -s " + alignment +" -m GTR+I+G -z " + gene_name + "_COMBINED.tre -te output/" + gene_name + "/02_output_IQTree/" + gene_name + "_IQTree_unconst.treefile -zb 10000 -au -pre " + gene_name + "_IQTree -quiet -nt " + threadNumber))
+    log.append(commandline(iqtree2_path + " -s " + alignment +" -m GTR+I+G -z " + gene_name + "_COMBINED.tre -te " + unconstTree + " -zb 10000 -au -pre " + gene_name + "_IQTree -quiet -nt " + threadNumber))
 
     return log
 
@@ -128,24 +126,53 @@ def iqtree_mltree(alignment, constraints, gene_name, threadNumber, iqtree_path):
     log.append(commandline("cat " + gene_name + "_IQTree_unconst.treefile " + ''.join([gene_name + "_IQTree_hypo" + str(i) + ".treefile " for i in range(len(constraints))]) + "> " + gene_name + "_COMBINED.tre"))
     return log
 
-def raxml(alignment, constraints, model, gene_name, threadNumber, raxml_path):
+def raxml(alignment, constraints, model, gene_name, threadNumber, raxml_path, raxml_version):
     log = []
-    log.append(commandline(raxml_path + " -s " + alignment + " -n withoutConstraints_" + gene_name + " -m  " + model + " -p 10000 -w " + os.getcwd()) + " --silent -T " + threadNumber)
+    if (raxml_version == "standard"):
+        log.append(commandline(raxml_path + " -s " + alignment + " -n withoutConstraints_" + gene_name + " -m  " + model + " -p 10000 -w " + os.getcwd() + " --silent -T " + threadNumber))
+    else:
+        log.append(commandline(raxml_path + " --msa " + alignment + " --prefix RAxML_withoutConstraints_" + gene_name + " --model  " + model + "  --seed 10000 --threads " + threadNumber))
     for i in range(len(constraints)):
         with open("hypo.txt","w") as hypo:
             hypo.write(constraints[i].as_string(schema="newick", suppress_rooting=True))
         removeGenesFromConstTree(alignment, "hypo.txt", "hypo_rem.txt")
-        log.append(commandline(raxml_path + " -s " + alignment + " -n hypothesis" + str(i) + "_" + gene_name + " -m " + model + " -g hypo_rem.txt -p 10000 -w " + os.getcwd()) + " --silent -T " + threadNumber)
+        if (raxml_version == "standard"):
+            log.append(commandline(raxml_path + " -s " + alignment + " -n hypothesis" + str(i) + "_" + gene_name + " -m " + model + " -g hypo_rem.txt -p 10000 -w " + os.getcwd() + " --silent -T " + threadNumber))
+        else:
+            #commandline(command)
+            try:
+                command = raxml_path + " --msa " + alignment + " --prefix RAxML_hypothesis" + str(i) + "_" + gene_name + " --model " + model + " --tree-constraint hypo_rem.txt --seed 10000 --threads " + threadNumber
+                raxmlOut = subprocess.check_output(command, shell = True).decode('utf-8').strip()
+            except:
+                command = raxml_path + " --msa " + alignment + " --prefix RAxML_hypothesis" + str(i) + "_" + gene_name + " --model " + model + " --evaluate --tree hypo_rem.txt --seed 10000 --threads " + threadNumber
+                raxmlOut = subprocess.check_output(command, shell = True).decode('utf-8').strip()
 
-    log.append(commandline("cat RAxML_bestTree.withoutConstraints_" + gene_name + ''.join([" RAxML_bestTree.hypothesis" + str(i) + "_" + gene_name for i in range(len(constraints))]) + " > " + gene_name + "_COMBINED.tre"))
+            log.append(command)
+            del(raxmlOut)
+            del(command)
+
+
+    if (raxml_version == "standard"):
+        log.append(commandline("cat RAxML_bestTree.withoutConstraints_" + gene_name + ''.join([" RAxML_bestTree.hypothesis" + str(i) + "_" + gene_name for i in range(len(constraints))]) + " > " + gene_name + "_COMBINED.tre"))
+    else:
+        log.append(commandline("cat RAxML_withoutConstraints_" + gene_name + ".raxml.bestTree" + ''.join([" RAxML_hypothesis" + str(i) + "_" + gene_name + ".raxml.bestTree" for i in range(len(constraints))]) + " > " + gene_name + "_COMBINED.tre"))
+
     return log
 
-def consel(alignment, consel_path, model, gene_name, mlcalc, threadNumber, raxml_path):
+def consel(alignment, consel_path, model, gene_name, mlcalc, threadNumber, raxml_path, raxml_version):
     log = []
     if(mlcalc == "RAxML"):
-        log.append(commandline(raxml_path + " -s " + alignment + " -n " + gene_name + ".trees.sitelh -m "+ model + " -f g -t output/" + gene_name + "/02_output_RAxML/RAxML_bestTree.withoutConstraints_" + gene_name + " -z " + gene_name + "_COMBINED.tre -p 10000 -w " + os.getcwd()) + " --silent -T " + threadNumber)
+        if (raxml_version == "standard"):
+            log.append(commandline(raxml_path + " -s " + alignment + " -n " + gene_name + ".trees.sitelh -m "+ model + " -f g -t output/" + gene_name + "/02_output_RAxML/RAxML_bestTree.withoutConstraints_" + gene_name + " -z " + gene_name + "_COMBINED.tre -p 10000 -w " + os.getcwd()) + " --silent -T " + threadNumber)
+        else:
+            log.append(commandline(raxml_path + " --msa " + alignment + " --prefix RAxML_" + gene_name + " --model "+ model + " --sitelh --tree " + gene_name + "_COMBINED.tre --seed 10000 --threads " + threadNumber))
+            log.append(commandline("mv RAxML_" + gene_name + ".raxml.siteLH RAxML_perSiteLLs." + gene_name + ".trees.sitelh"))
     else:
-        log.append(commandline(raxml_path + " -s " + alignment + " -n " + gene_name + ".trees.sitelh -m "+ model + " -f g -t output/" + gene_name + "/02_output_IQTree/" + gene_name + "_IQTree_unconst.treefile -z " + gene_name + "_COMBINED.tre -p 10000 -w " + os.getcwd()) + " --silent -T " + threadNumber)
+        if (raxml_version == "standard"):
+            log.append(commandline(raxml_path + " -s " + alignment + " -n " + gene_name + ".trees.sitelh -m "+ model + " -f g -t output/" + gene_name + "/02_output_IQTree/" + gene_name + "_IQTree_unconst.treefile -z " + gene_name + "_COMBINED.tre -p 10000 -w " + os.getcwd()) + " --silent -T " + threadNumber)
+        else:
+            log.append(commandline(raxml_path + " --msa " + alignment + " --prefix RAxML_" + gene_name + " --model "+ model + " --sitelh --tree " + gene_name + "_COMBINED.tre --seed 10000 --threads " + threadNumber))
+            log.append(commandline("mv RAxML_" + gene_name + ".raxml.siteLH RAxML_perSiteLLs." + gene_name + ".trees.sitelh"))
     log.append("\n## CONSEL")
     log.append(commandline("mv RAxML_perSiteLLs." + gene_name + ".trees.sitelh RAxML_perSiteLLs_" + gene_name + ".trees.sitelh"))
     log.append(commandline(consel_path + "/seqmt --puzzle RAxML_perSiteLLs_" + gene_name + ".trees.sitelh " + gene_name + "_CONSEL.mt"))
